@@ -1,0 +1,2992 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Risiko — BPA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ APP CSS ═══════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════
+   RESET & VARIABLES
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+:root{
+  --teal:       #00797f;
+  --teal-d:     #005f64;
+  --teal-dd:    #004548;
+  --teal-l:     #e0f5f6;
+  --teal-ll:    #f0fafb;
+  --lime:       #c8d92b;
+  --lime-d:     #a8b720;
+  --lime-l:     #f5f8c8;
+  --red:        #dc2626;
+  --red-l:      #fef2f2;
+  --orange:     #ea580c;
+  --orange-l:   #fff7ed;
+  --yellow:     #ca8a04;
+  --yellow-l:   #fefce8;
+  --green:      #16a34a;
+  --green-l:    #f0fdf4;
+  --blue:       #1d4ed8;
+  --blue-l:     #eff6ff;
+  --bg:         #f4f6f9;
+  --surface:    #ffffff;
+  --surf2:      #f8fafc;
+  --surf3:      #f1f5f9;
+  --border:     #e2e8f0;
+  --border-s:   #cbd5e1;
+  --text:       #0f172a;
+  --text-s:     #475569;
+  --text-m:     #94a3b8;
+  --radius:     10px;
+  --radius-s:   6px;
+  --radius-l:   14px;
+  --shadow-s:   0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow:     0 4px 16px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04);
+  --shadow-l:   0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+  --sw: 256px;
+  --hh: 58px;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.55;
+  min-height:100vh;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════ */
+.shell{display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sb{
+  width:var(--sw);
+  background:var(--teal-dd);
+  display:flex;flex-direction:column;
+  position:fixed;inset:0 auto 0 0;
+  z-index:60;
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+
+.sb-brand{
+  padding:20px 18px 16px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sb-logo{
+  display:flex;align-items:center;gap:11px;
+  margin-bottom:0;
+}
+.sb-logo-icon{
+  width:38px;height:38px;
+  background:var(--lime);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.sb-logo-icon svg{width:19px;height:19px;color:var(--teal-dd)}
+.sb-logo-text h1{
+  font-size:13px;font-weight:700;
+  color:#fff;line-height:1.2;letter-spacing:.1px
+}
+.sb-logo-text p{
+  font-size:10.5px;color:rgba(255,255,255,.42);
+  font-weight:400;margin-top:2px
+}
+
+.sb-nav{flex:1;padding:8px 8px;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+
+.sb-group-label{
+  font-size:9px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:rgba(255,255,255,.28);
+  padding:14px 10px 5px;
+}
+
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  width:100%;padding:9px 10px;
+  border-radius:var(--radius-s);
+  color:rgba(255,255,255,.58);
+  font-size:13px;font-weight:500;
+  background:none;border:none;cursor:pointer;
+  transition:all .15s;text-align:left;
+  margin-bottom:1px;
+}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;opacity:.75}
+.sb-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.sb-item.active{
+  background:var(--lime);
+  color:var(--teal-dd);
+  font-weight:700;
+}
+.sb-item.active svg{opacity:1;color:var(--teal-dd)}
+
+.sb-foot{
+  padding:13px 16px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.sb-foot p{font-size:9.5px;color:rgba(255,255,255,.2)}
+
+/* ── Main ── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Topbar ── */
+.tb{
+  height:var(--hh);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 26px;
+  position:sticky;top:0;z-index:40;
+  gap:14px;
+}
+.tb-titles h2{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.2}
+.tb-titles p{font-size:11px;color:var(--text-m);margin-top:1px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-date{
+  font-size:11px;color:var(--text-m);
+  font-family:'JetBrains Mono',monospace;
+}
+.tb-chip{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;
+  background:var(--teal-l);color:var(--teal);
+  transition:all .2s;
+}
+.tb-chip.err{background:var(--red-l);color:var(--red)}
+.tb-chip.warn{background:var(--yellow-l);color:var(--yellow)}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;
+  animation:pulse 2s infinite;
+}
+.dot.off{animation:none;opacity:.6}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── Content ── */
+.content{
+  flex:1;padding:24px 26px;
+  animation:pageIn .22s ease;
+}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════════
+   COMPONENTS
+═══════════════════════════════════════════════ */
+
+/* ── Card ── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-l);
+  box-shadow:var(--shadow-s);
+  overflow:hidden;
+}
+.ch{
+  display:flex;align-items:center;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  gap:10px;
+}
+.ch h3{font-size:13.5px;font-weight:700;color:var(--text);flex:1}
+.ch-icon{
+  width:30px;height:30px;
+  background:var(--teal-l);
+  border-radius:var(--radius-s);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ch-icon svg{width:14px;height:14px;color:var(--teal)}
+.cb{padding:20px}
+
+/* ── Stat Cards ── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-bottom:18px;
+}
+.stat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-l);
+  padding:16px 18px;
+  box-shadow:var(--shadow-s);
+  transition:transform .18s,box-shadow .18s;
+  position:relative;overflow:hidden;
+}
+.stat::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;background:var(--accent-color,var(--teal));
+}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--text-m);
+  margin-bottom:9px;
+}
+.stat-val{font-size:28px;font-weight:800;line-height:1;margin-bottom:3px}
+.stat-sub{font-size:10.5px;color:var(--text-m)}
+.stat-ico{
+  position:absolute;top:14px;right:14px;
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.stat-ico svg{width:16px;height:16px}
+
+/* ── Form ── */
+.fsec{margin-bottom:24px}
+.fsec-title{
+  display:flex;align-items:center;gap:7px;
+  font-size:10.5px;font-weight:700;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--teal);
+  margin-bottom:13px;padding-bottom:8px;
+  border-bottom:2px solid var(--teal-l);
+}
+.fsec-num{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--teal);color:#fff;
+  font-size:9px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{
+  font-size:11px;font-weight:600;
+  color:var(--text-s);
+}
+.fl .req{color:var(--red);margin-left:2px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g5{grid-template-columns:repeat(5,1fr)}
+.span2{grid-column:1/-1}
+
+input,select,textarea{
+  font-family:'Inter',sans-serif;font-size:13px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-s);
+  padding:8px 11px;
+  background:var(--surf2);color:var(--text);
+  transition:border .15s,box-shadow .15s,background .15s;
+  width:100%;outline:none;
+  -webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--teal);
+  background:var(--surface);
+  box-shadow:0 0 0 3px rgba(0,121,127,.1);
+}
+input[readonly],textarea[readonly]{
+  background:var(--teal-ll);
+  color:var(--teal-d);
+  font-weight:600;cursor:default;
+  border-color:transparent;
+}
+input:disabled,textarea:disabled{
+  background:var(--surf3);
+  color:var(--text-m);
+  cursor:not-allowed;border-color:transparent;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  padding-right:30px;
+}
+textarea{resize:vertical;min-height:68px}
+
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--radius-s);
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;
+  border:none;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn-p{background:var(--teal);color:#fff}
+.btn-p:hover{background:var(--teal-d)}
+.btn-p:disabled{opacity:.55;cursor:not-allowed}
+.btn-lime{background:var(--lime);color:var(--teal-dd)}
+.btn-lime:hover{background:var(--lime-d)}
+.btn-g{
+  background:var(--surf2);color:var(--text-s);
+  border:1.5px solid var(--border);
+}
+.btn-g:hover{background:var(--surf3)}
+.btn-r{background:var(--red-l);color:var(--red)}
+.btn-r:hover{background:#fecaca}
+.btn-sm{padding:5px 10px;font-size:11.5px}
+.btn-lg{padding:10px 22px;font-size:13.5px}
+
+/* ── Badges ── */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:2px 7px;border-radius:20px;
+  font-size:10.5px;font-weight:700;white-space:nowrap;
+}
+.b-danger  {background:#fee2e2;color:#b91c1c}
+.b-warning {background:#ffedd5;color:#c2410c}
+.b-yellow  {background:#fef9c3;color:#a16207}
+.b-success {background:#dcfce7;color:#15803d}
+.b-blue    {background:#dbeafe;color:#1e40af}
+.b-gray    {background:var(--surf3);color:var(--text-m)}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--surf2);border-bottom:2px solid var(--border)}
+th{
+  padding:9px 11px;text-align:left;
+  font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;
+  color:var(--text-s);white-space:nowrap;
+}
+td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+
+/* ── Risk Matrix ── */
+.mx-wrap{overflow-x:auto}
+.mx-grid{
+  display:inline-grid;
+  grid-template-columns:36px repeat(5,minmax(68px,1fr));
+  gap:4px;
+}
+.mx-cell{
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  aspect-ratio:1;min-width:68px;
+  font-weight:800;font-size:15px;color:#fff;
+  position:relative;cursor:default;
+  transition:transform .15s,box-shadow .15s;
+}
+.mx-cell:hover{transform:scale(1.07);box-shadow:var(--shadow);z-index:2}
+.mx-cell .mc-cnt{
+  position:absolute;top:3px;right:3px;
+  background:rgba(255,255,255,.92);
+  border-radius:50%;width:19px;height:19px;
+  font-size:9.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.mx-lbl{
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--text-m);
+}
+.mx-clbl{
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--text-m);
+  padding-bottom:2px;
+}
+.mx-axis-lbl{
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--text-m);
+  text-align:center;padding:6px 0;
+}
+
+/* ── Chart bars ── */
+.cbar{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.cbar-lbl{font-size:11.5px;font-weight:500;color:var(--text-s);width:136px;flex-shrink:0;line-height:1.3}
+.cbar-track{flex:1;height:7px;background:var(--border);border-radius:99px;overflow:hidden}
+.cbar-fill{height:100%;border-radius:99px;transition:width .5s ease}
+.cbar-num{font-size:11.5px;font-weight:700;width:24px;text-align:right;flex-shrink:0}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:52px 20px}
+.empty-ico{
+  width:56px;height:56px;background:var(--surf3);
+  border-radius:50%;display:flex;align-items:center;
+  justify-content:center;margin:0 auto 14px;
+}
+.empty-ico svg{width:24px;height:24px;color:var(--text-m)}
+.empty h4{font-size:14px;font-weight:700;color:var(--text-s);margin-bottom:5px}
+.empty p{font-size:12px;color:var(--text-m)}
+
+/* ── Toast ── */
+#toasts{
+  position:fixed;top:18px;right:18px;
+  z-index:9999;display:flex;flex-direction:column;gap:7px;
+  pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 15px;border-radius:var(--radius);
+  box-shadow:var(--shadow-l);
+  font-size:12.5px;font-weight:500;
+  min-width:250px;max-width:360px;
+  pointer-events:all;
+  animation:tIn .25s cubic-bezier(.34,1.56,.64,1);
+  transition:opacity .25s,transform .25s;
+}
+.toast.out{opacity:0;transform:translateX(14px)}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}}
+.toast svg{width:16px;height:16px;flex-shrink:0}
+.t-ok  {background:var(--teal);  color:#fff}
+.t-err {background:var(--red);   color:#fff}
+.t-inf {background:var(--blue);  color:#fff}
+.t-wrn {background:var(--orange);color:#fff}
+
+/* ── Loading ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(255,255,255,.82);
+  z-index:999;display:flex;align-items:center;
+  justify-content:center;flex-direction:column;gap:14px;
+}
+.spin{
+  width:34px;height:34px;
+  border:3px solid var(--border);
+  border-top-color:var(--teal);
+  border-radius:50%;
+  animation:rot .65s linear infinite;
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ── Modal ── */
+.modal-back{
+  position:fixed;inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  animation:mbIn .18s ease;
+}
+@keyframes mbIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--surface);
+  border-radius:var(--radius-l);
+  box-shadow:var(--shadow-l);
+  width:100%;max-width:460px;
+  animation:mIn .22s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+@keyframes mIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.modal-hdr{
+  padding:18px 22px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.modal-hdr-icon{
+  width:38px;height:38px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px;
+}
+.modal-hdr-icon svg{width:18px;height:18px}
+.modal-hdr-icon.warn{background:#fef3c7}
+.modal-hdr-icon.warn svg{color:#b45309}
+.modal-hdr-icon.danger{background:#fee2e2}
+.modal-hdr-icon.danger svg{color:#dc2626}
+.modal-hdr-text h4{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.25}
+.modal-hdr-text p{font-size:12px;color:var(--text-s);margin-top:4px;line-height:1.5}
+.modal-body{padding:16px 22px}
+.modal-info-box{
+  background:var(--surf2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  margin-bottom:14px;
+}
+.modal-info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;padding:3px 0;
+}
+.modal-info-row span:first-child{color:var(--text-m);font-weight:500}
+.modal-info-row span:last-child{color:var(--text);font-weight:600}
+.modal-warn-note{
+  display:flex;align-items:flex-start;gap:9px;
+  background:#fef3c7;border:1px solid #f59e0b;
+  border-radius:var(--radius-s);padding:10px 12px;
+}
+.modal-warn-note svg{width:15px;height:15px;color:#b45309;flex-shrink:0;margin-top:1px}
+.modal-warn-note p{font-size:11.5px;color:#78350f;line-height:1.5}
+.modal-warn-note strong{font-weight:700}
+.modal-foot{
+  padding:14px 22px 18px;
+  display:flex;gap:8px;justify-content:flex-end;
+  border-top:1px solid var(--border);
+}
+
+/* ── Alert banner ── */
+.alert{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:13px 16px;border-radius:var(--radius);
+  margin-bottom:18px;
+}
+.alert.hidden{display:none}
+.alert-warn{background:#fef3c7;border:1px solid #f59e0b}
+.alert-warn svg{color:#b45309;flex-shrink:0;width:18px;height:18px;margin-top:1px}
+.alert-warn .a-title{font-size:12.5px;font-weight:700;color:#92400e}
+.alert-warn .a-body{font-size:11.5px;color:#78350f;margin-top:3px;line-height:1.5}
+.alert-warn code{
+  background:rgba(0,0,0,.08);border-radius:3px;
+  padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:11px;
+}
+
+/* ── Status pills ── */
+.sp{
+  display:inline-flex;align-items:center;
+  padding:2px 8px;border-radius:20px;
+  font-size:10.5px;font-weight:700;white-space:nowrap;
+}
+.sp-blm{background:#fee2e2;color:#b91c1c}
+.sp-sdg{background:#ffedd5;color:#c2410c}
+.sp-sel{background:#dcfce7;color:#15803d}
+
+/* ── Misc ── */
+.mono{font-family:'JetBrains Mono',monospace}
+.teal{color:var(--teal)}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.divider{height:1px;background:var(--border);margin:8px 0}
+
+
+/* ═══ LOGIN CSS ═════════════════════════════════════ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif}
+
+:root{
+  --teal:    #00797f;
+  --teal-d:  #005f64;
+  --teal-dd: #004548;
+  --teal-l:  #e0f5f6;
+  --lime:    #c8d92b;
+  --lime-d:  #a8b720;
+  --text:    #0f172a;
+  --text-s:  #475569;
+  --text-m:  #94a3b8;
+  --border:  #e2e8f0;
+  --surf2:   #f8fafc;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+}
+
+body{
+  background: linear-gradient(135deg, #004548 0%, #00797f 45%, #1a6b30 100%);
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; padding:20px;
+  position:relative; overflow:hidden;
+}
+
+/* Background decoration */
+body::before{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(200,217,43,.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0,121,127,.3) 0%, transparent 50%),
+    radial-gradient(circle at 60% 10%, rgba(255,255,255,.04) 0%, transparent 40%);
+  pointer-events:none;
+}
+
+/* Floating shapes */
+.bg-shape{
+  position:absolute; border-radius:50%;
+  background:rgba(255,255,255,.03);
+  pointer-events:none;
+}
+.bg-shape-1{width:400px;height:400px;top:-100px;right:-80px}
+.bg-shape-2{width:280px;height:280px;bottom:-60px;left:-60px}
+.bg-shape-3{width:180px;height:180px;top:40%;left:5%}
+
+/* Login Card */
+.card{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 24px 64px rgba(0,0,0,.22), 0 4px 16px rgba(0,0,0,.12);
+  width:100%; max-width:440px;
+  position:relative; z-index:1;
+  overflow:hidden;
+  animation:cardIn .5s cubic-bezier(.34,1.3,.64,1);
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(24px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+
+/* Card Header */
+.card-head{
+  background:linear-gradient(135deg, #004548 0%, #00797f 100%);
+  padding:32px 36px 28px;
+  text-align:center; position:relative;
+}
+.card-head::after{
+  content:'';
+  position:absolute; bottom:-1px; left:0; right:0;
+  height:24px;
+  background:#fff;
+  border-radius:24px 24px 0 0;
+}
+.logo-wrap{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:64px; height:64px;
+  background:rgba(255,255,255,.12);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:18px;
+  margin-bottom:14px;
+  backdrop-filter:blur(8px);
+}
+.logo-wrap svg{width:30px; height:30px; color:#fff}
+.card-head h1{
+  font-size:20px; font-weight:800; color:#fff;
+  letter-spacing:-.3px; margin-bottom:4px;
+}
+.card-head p{font-size:12px; color:rgba(255,255,255,.65)}
+
+/* Card Body */
+.card-body{padding:28px 36px 32px}
+
+/* Form */
+.form-group{margin-bottom:16px}
+.form-label{
+  display:block;
+  font-size:11.5px; font-weight:700;
+  color:var(--text-s); margin-bottom:6px;
+  letter-spacing:.2px;
+}
+.form-label .req{color:var(--red); margin-left:2px}
+.input-wrap{position:relative}
+.input-wrap svg.ico{
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; color:var(--text-m);
+  pointer-events:none; flex-shrink:0;
+}
+input, select{
+  font-family:'Inter',sans-serif;
+  font-size:13.5px;
+  width:100%;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px 10px 38px;
+  background:var(--surf2);
+  color:var(--text);
+  outline:none;
+  transition:border .15s, box-shadow .15s, background .15s;
+  -webkit-appearance:none;
+}
+input:focus, select:focus{
+  border-color:var(--teal);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(0,121,127,.12);
+}
+input.err, select.err{
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(220,38,38,.1);
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center;
+  padding-right:34px;
+}
+
+/* Password toggle */
+.pwd-toggle{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; padding:2px;
+  color:var(--text-m); transition:color .15s;
+}
+.pwd-toggle:hover{color:var(--teal)}
+.pwd-toggle svg{width:16px; height:16px; display:block}
+
+/* Error message */
+.field-err{
+  font-size:11px; color:var(--red); font-weight:500;
+  margin-top:5px; display:none;
+}
+.field-err.show{display:block}
+
+/* Alert box */
+.alert-box{
+  display:none;
+  align-items:flex-start; gap:10px;
+  background:var(--red-l);
+  border:1px solid #fca5a5;
+  border-radius:10px; padding:12px 14px;
+  margin-bottom:16px;
+  animation:shake .3s ease;
+}
+.alert-box.show{display:flex}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%,60%{transform:translateX(-4px)}
+  40%,80%{transform:translateX(4px)}
+}
+.alert-box svg{width:16px;height:16px;color:var(--red);flex-shrink:0;margin-top:1px}
+.alert-box p{font-size:12px;color:#991b1b;font-weight:500}
+
+/* Submit button */
+.btn-submit{
+  width:100%; padding:12px;
+  background:linear-gradient(135deg,#005f64,#00797f);
+  color:#fff; border:none; border-radius:10px;
+  font-family:'Inter',sans-serif;
+  font-size:14px; font-weight:700;
+  cursor:pointer; letter-spacing:.2px;
+  transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  position:relative; overflow:hidden;
+}
+.btn-submit::before{
+  content:''; position:absolute; inset:0;
+  background:rgba(255,255,255,0);
+  transition:background .15s;
+}
+.btn-submit:hover::before{background:rgba(255,255,255,.08)}
+.btn-submit:active{transform:scale(.98)}
+.btn-submit:disabled{opacity:.6; cursor:not-allowed}
+.btn-submit svg{width:16px; height:16px}
+
+/* Spinner */
+.spin{
+  width:18px; height:18px;
+  border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:rot .6s linear infinite;
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* Divider */
+.divider{
+  display:flex; align-items:center; gap:12px;
+  margin:20px 0;
+}
+.divider::before,.divider::after{content:''; flex:1; height:1px; background:var(--border)}
+.divider span{font-size:11px; color:var(--text-m); font-weight:500; white-space:nowrap}
+
+/* User hint section */
+.hint-box{
+  background:var(--surf2);
+  border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px;
+  font-size:11.5px;
+}
+.hint-title{
+  font-size:10px; font-weight:700; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--text-m);
+  margin-bottom:8px;
+}
+.hint-row{
+  display:flex; align-items:center; gap:8px;
+  padding:4px 0; border-bottom:1px solid var(--border);
+}
+.hint-row:last-child{border-bottom:none}
+.hint-badge{
+  font-size:9.5px; font-weight:700; padding:2px 7px;
+  border-radius:20px; white-space:nowrap; flex-shrink:0;
+}
+.hint-admin{background:#dcfce7; color:#15803d}
+.hint-tim{background:#dbeafe; color:#1e40af}
+.hint-row-info{font-size:11px; color:var(--text-s)}
+
+/* Footer */
+.card-foot{
+  padding:14px 36px 20px;
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.card-foot p{font-size:10.5px; color:var(--text-m)}
+
+/* Year selector with custom style */
+.year-select-wrap{position:relative}
+.year-select-wrap svg.ico{
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; color:var(--text-m);
+  pointer-events:none; z-index:1;
+}
+
+/* Highlight year chip */
+.year-chip{
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--teal-l); color:var(--teal);
+  border-radius:6px; padding:3px 9px;
+  font-size:11.5px; font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+
+
+/* ═══ VIEW TOGGLE ═══════════════════════════════════ */
+body { margin:0; }
+#view-login         { display:flex; min-height:100vh; }
+#view-login.hidden  { display:none !important; }
+#view-app           { display:none; min-height:100vh; }
+#view-app.visible   { display:flex !important; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     VIEW LOGIN
+══════════════════════════════════════════════════ -->
+<div id="view-login">
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="bg-shape bg-shape-3"></div>
+
+<div class="card">
+  <!-- Header -->
+  <div class="card-head">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <h1>Manajemen Risiko</h1>
+    <p>Biro Perencanaan &amp; Anggaran — Silakan masuk untuk melanjutkan</p>
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+
+    <!-- Error Alert -->
+    <div class="alert-box" id="alert-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <p id="alert-msg">Username atau password salah.</p>
+    </div>
+
+    <form id="login-form" onsubmit="doLogin(event)" novalidate>
+
+      <!-- Tahun -->
+      <div class="form-group">
+        <label class="form-label" for="inp-year">
+          Tahun <span class="req">*</span>
+        </label>
+        <div class="year-select-wrap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <select id="inp-year" required style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px">
+            <option value="">— Pilih Tahun —</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+          </select>
+        </div>
+        <div class="field-err" id="err-year">Pilih tahun terlebih dahulu.</div>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label class="form-label" for="inp-user">
+          Username <span class="req">*</span>
+        </label>
+        <div class="input-wrap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" id="inp-user" placeholder="Masukkan username" required autocomplete="username" spellcheck="false">
+        </div>
+        <div class="field-err" id="err-user">Username tidak boleh kosong.</div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" style="margin-bottom:22px">
+        <label class="form-label" for="inp-pass">
+          Password <span class="req">*</span>
+        </label>
+        <div class="input-wrap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input type="password" id="inp-pass" placeholder="Masukkan password" required autocomplete="current-password">
+          <button type="button" class="pwd-toggle" onclick="togglePwd()" title="Tampilkan/sembunyikan password">
+            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-err" id="err-pass">Password tidak boleh kosong.</div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Masuk ke Sistem
+      </button>
+    </form>
+
+    <!-- Hint -->
+    <div class="divider"><span>Panduan Akun</span></div>
+    <div class="hint-box">
+      <div class="hint-title">Tipe Akses Pengguna</div>
+      <div class="hint-row">
+        <span class="hint-badge hint-admin">Admin</span>
+        <span class="hint-row-info">Akses penuh termasuk input &amp; hapus risiko</span>
+      </div>
+      <div class="hint-row">
+        <span class="hint-badge hint-tim">Tim Kerja</span>
+        <span class="hint-row-info">Hanya melihat risiko tim sendiri, input realisasi &amp; monitoring</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="card-foot">
+    <p>© 2025 BPA Risk Management System v2.1 &nbsp;·&nbsp; Biro Perencanaan &amp; Anggaran</p>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SHARED ELEMENTS (toast, overlay, modal)
+══════════════════════════════════════════════════ -->
+<div id="toasts"></div>
+<div class="overlay" id="ov">
+  <div class="spin"></div>
+  <p style="font-size:12.5px;color:var(--text-s);font-weight:500">Memuat data...</p>
+</div>
+<div id="modal-root"></div>
+
+<!-- ══════════════════════════════════════════════════
+     VIEW APP
+══════════════════════════════════════════════════ -->
+<div id="view-app">
+<div class="shell">
+<!-- ═══ SIDEBAR ═══════════════════════════════════ -->
+<aside class="sb" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="sb-logo-text">
+        <h1>Manajemen Risiko</h1>
+        <p>Biro Perencanaan &amp; Anggaran</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-group-label">Utama</div>
+    <button class="sb-item active" data-p="dashboard" onclick="go('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="sb-item" data-p="input" onclick="go('input')" id="nav-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Input Risiko
+    </button>
+    <button class="sb-item" data-p="peta" onclick="go('peta')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Peta Risiko
+    </button>
+
+    <div class="sb-group-label" style="margin-top:6px">Monitoring</div>
+    <button class="sb-item" data-p="realisasi" onclick="go('realisasi')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Input Realisasi
+    </button>
+    <button class="sb-item" data-p="monitoring" onclick="go('monitoring')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Monitoring
+    </button>
+
+    <div class="sb-group-label" style="margin-top:6px">Export</div>
+    <button class="sb-item" data-p="laporan" onclick="go('laporan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Laporan &amp; Export
+    </button>
+  </nav>
+
+  <!-- User info + logout -->
+  <div style="padding:12px 10px 8px;border-top:1px solid rgba(255,255,255,.07)">
+    <div style="display:flex;align-items:center;gap:9px;padding:10px 10px;border-radius:8px;background:rgba(255,255,255,.06);margin-bottom:6px">
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--lime);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#004548" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div id="sb-username" style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+        <div id="sb-role" style="font-size:10px;color:rgba(255,255,255,.45);margin-top:1px">—</div>
+      </div>
+      <div id="sb-year-chip" style="font-size:10px;font-weight:800;background:rgba(200,217,43,.2);color:var(--lime);padding:2px 7px;border-radius:5px;font-family:monospace;flex-shrink:0">—</div>
+    </div>
+    <button onclick="showLogoutModal()" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;background:none;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif" onmouseover="this.style.background='rgba(220,38,38,.15)';this.style.color='#fca5a5';this.style.borderColor='rgba(220,38,38,.3)'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,.5)';this.style.borderColor='rgba(255,255,255,.12)'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar
+    </button>
+  </div>
+
+  <div class="sb-foot"><p>© 2025 BPA Risk Management v2.1</p></div>
+</aside>
+
+<!-- ═══ MAIN ═══════════════════════════════════════ -->
+<div class="main">
+  <header class="tb">
+    <div class="tb-titles">
+      <h2 id="pg-title">Dashboard</h2>
+      <p id="pg-sub">Ringkasan manajemen risiko organisasi</p>
+    </div>
+    <div class="tb-right">
+      <span class="tb-date" id="tb-date"></span>
+      <div style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:var(--teal-l);color:var(--teal);font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace" id="tb-year-chip">—</div>
+      <div class="tb-chip" id="api-chip">
+        <div class="dot" id="api-dot"></div>
+        <span id="api-txt">Menghubungkan...</span>
+      </div>
+      <button class="btn btn-g btn-sm" onclick="loadAll()" title="Refresh data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.51"/></svg>
+      </button>
+    </div>
+  </header>
+  <div class="content" id="content"></div>
+</div>
+</div>
+</div>
+
+<script>
+/* ================================================================
+   KONFIGURASI — edit di sini
+================================================================ */
+const SESSION_KEY = 'bpa_risk_session_2025';
+
+/* ================================================================
+   DAFTAR USER
+================================================================ */
+const USERS = [
+  { username: 'admin',        password: 'admin123', role: 'admin', tim: null },
+  { username: 'admin.bpa',    password: 'admin123', role: 'admin', tim: null },
+  { username: 'perencanaan1', password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Perencanaan 1' },
+  { username: 'perencanaan2', password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Perencanaan 2' },
+  { username: 'anggaran1',    password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Anggaran 1' },
+  { username: 'anggaran2',    password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Anggaran 2' },
+  { username: 'monev1',       password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Monitoring dan Evaluasi 1' },
+  { username: 'monev2',       password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Monitoring dan Evaluasi 2' },
+  { username: 'dakfisik',     password: 'bpa123',   role: 'tim', tim: 'Tim Kerja DAK Fisik' },
+  { username: 'daknonfisik',  password: 'bpa123',   role: 'tim', tim: 'Tim Kerja DAK Non Fisik' },
+  { username: 'phln1',        password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Pinjaman dan Hibah 1' },
+  { username: 'phln2',        password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Pinjaman dan Hibah 2' },
+  { username: 'sinkronisasi', password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Sinkronisasi' },
+  { username: 'dukman',       password: 'bpa123',   role: 'tim', tim: 'Tim Kerja Dukungan Manajemen' },
+];
+
+/* ================================================================
+   CFG (digunakan oleh app JS)
+================================================================ */
+const CFG = {
+  SCRIPT_URL:  'https://script.google.com/macros/s/AKfycbykDf7HeMCimjdshEtBG9wo0rWSjFoyu6erRfWRWN6yFfMUNqOFri5viBp3rdiK7-YJ/exec',
+  SESSION_KEY: SESSION_KEY,
+  LOGIN_URL:   null
+};
+
+/* ================================================================
+   VIEW SWITCHER
+================================================================ */
+function showLogin() {
+  document.getElementById('view-login').classList.remove('hidden');
+  document.getElementById('view-app').classList.remove('visible');
+  setTimeout(() => {
+    const u = document.getElementById('inp-user');
+    if (u) u.focus();
+  }, 50);
+}
+
+function showApp() {
+  document.getElementById('view-login').classList.add('hidden');
+  document.getElementById('view-app').classList.add('visible');
+}
+
+/* ================================================================
+   SESSION HELPERS
+================================================================ */
+function saveSession(user, year) {
+  const data = btoa(JSON.stringify({
+    username: user.username, role: user.role,
+    tim: user.tim, year: year, loginAt: Date.now()
+  }));
+  try { sessionStorage.setItem(SESSION_KEY, data); } catch(e) {}
+  try { localStorage.setItem(SESSION_KEY, data); } catch(e) {}
+}
+
+function loadSession() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(atob(raw));
+    if (!s || !s.loginAt) return null;
+    if ((Date.now() - s.loginAt) > 8 * 60 * 60 * 1000) { clearSessionData(); return null; }
+    return s;
+  } catch(e) { return null; }
+}
+
+function clearSessionData() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch(e) {}
+  try { localStorage.removeItem(SESSION_KEY); } catch(e) {}
+}
+
+/* ================================================================
+   LOGIN FORM HANDLERS
+================================================================ */
+function showAlert(msg) {
+  const box = document.getElementById('alert-box');
+  const txt = document.getElementById('alert-msg');
+  if (txt) txt.textContent = msg;
+  if (box) box.className = 'alert-box show';
+}
+function hideAlert() {
+  const box = document.getElementById('alert-box');
+  if (box) box.className = 'alert-box';
+}
+function setFieldErr(id, show) {
+  const el  = document.getElementById('err-' + id);
+  const inp = document.getElementById('inp-' + id);
+  if (el)  el.className  = 'field-err' + (show ? ' show' : '');
+  if (inp) inp.className = show ? 'err' : '';
+}
+function togglePwd() {
+  const inp  = document.getElementById('inp-pass');
+  const icon = document.getElementById('eye-icon');
+  if (!inp || !icon) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  icon.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+
+function doLogin(e) {
+  e.preventDefault();
+  hideAlert();
+  const year  = (document.getElementById('inp-year')?.value || '').trim();
+  const uname = (document.getElementById('inp-user')?.value || '').trim();
+  const pass  = document.getElementById('inp-pass')?.value || '';
+
+  let hasErr = false;
+  if (!year)  { setFieldErr('year', true);  hasErr = true; } else setFieldErr('year', false);
+  if (!uname) { setFieldErr('user', true);  hasErr = true; } else setFieldErr('user', false);
+  if (!pass)  { setFieldErr('pass', true);  hasErr = true; } else setFieldErr('pass', false);
+  if (hasErr) return;
+
+  const btn = document.getElementById('btn-submit');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spin"></div>'; }
+
+  setTimeout(() => {
+    const user = USERS.find(u =>
+      u.username.toLowerCase() === uname.toLowerCase() && u.password === pass
+    );
+    if (!user) {
+      showAlert('Username atau password yang Anda masukkan salah. Periksa kembali dan coba lagi.');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Masuk ke Sistem';
+      }
+      return;
+    }
+    saveSession(user, year);
+    if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Berhasil, memuat aplikasi...';
+    setTimeout(() => bootLogin(user, year), 400);
+  }, 400);
+}
+
+/* ================================================================
+   APP JS (dari index.html — CFG sudah didefinisikan di atas)
+================================================================ */
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIG  — ganti SCRIPT_URL setelah deploy Google Apps Script
+═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  'Risiko Kebijakan','Risiko Reputasi','Risiko Fraud',
+  'Risiko Legal','Risiko Kepatuhan','Risiko Operasional'
+];
+const SUMBER = ['Eksternal','Internal'];
+const EFEK   = ['Efektif','Tidak Efektif'];
+const TIMS   = [
+  'Tim Kerja Perencanaan 1','Tim Kerja Perencanaan 2',
+  'Tim Kerja Anggaran 1','Tim Kerja Anggaran 2',
+  'Tim Kerja Monitoring dan Evaluasi 1','Tim Kerja Monitoring dan Evaluasi 2',
+  'Tim Kerja DAK Fisik','Tim Kerja DAK Non Fisik',
+  'Tim Kerja Pinjaman dan Hibah 1','Tim Kerja Pinjaman dan Hibah 2',
+  'Tim Kerja Sinkronisasi','Tim Kerja Dukungan Manajemen'
+];
+const BOBOT = {
+  '1-1':1,'1-2':1.5,'1-3':2,'1-4':3,'1-5':4,
+  '2-1':1,'2-2':1.8,'2-3':1.83,'2-4':1.9,'2-5':2.1,
+  '3-1':1.17,'3-2':1.42,'3-3':1.43,'3-4':1.46,'3-5':1.47,
+  '4-1':1.2,'4-2':1.19,'4-3':1.3,'4-4':1.16,'4-5':1.2,
+  '5-1':1.5,'5-2':1.4,'5-3':1.13,'5-4':1.15,'5-5':1
+};
+const MX = {
+  '1-1':1,'1-2':3,'1-3':6,'1-4':12,'1-5':20,
+  '2-1':2,'2-2':7,'2-3':11,'2-4':15,'2-5':21,
+  '3-1':4,'3-2':9,'3-3':13,'3-4':18,'3-5':22,
+  '4-1':5,'4-2':10,'4-3':16,'4-4':19,'4-5':24,
+  '5-1':8,'5-2':14,'5-3':17,'5-4':23,'5-5':25
+};
+const LEVEL_COLOR = {
+  'Sangat Rendah':'#1d4ed8','Rendah':'#16a34a','Sedang':'#ca8a04',
+  'Tinggi':'#ea580c','Sangat Tinggi':'#dc2626'
+};
+const LEVEL_BADGE = {
+  'Sangat Rendah':'b-blue','Rendah':'b-success','Sedang':'b-yellow',
+  'Tinggi':'b-warning','Sangat Tinggi':'b-danger'
+};
+const STATUS_CLS = {
+  'Belum Dilaksanakan':'sp-blm',
+  'Sedang Dilaksanakan':'sp-sdg',
+  'Selesai Dilaksanakan':'sp-sel'
+};
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+const S = {
+  risks:[], reals:[], page:'dashboard', apiOk:false, selRisk:null,
+  // Auth state — populated by checkAuth()
+  user: null,     // { username, role, tim, year, loginAt }
+  year: null,     // active year string e.g. '2025'
+  isAdmin: false, // shortcut
+  userTim: null,  // null if admin, tim name if tim user
+};
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════════════ */
+function checkAuth() {
+  try {
+    const raw = sessionStorage.getItem(CFG.SESSION_KEY) || localStorage.getItem(CFG.SESSION_KEY);
+    if (!raw) { redirectLogin(); return false; }
+    const session = JSON.parse(atob(raw));
+    if (!session || !session.loginAt) { redirectLogin(); return false; }
+    // Expire after 8 hours
+    if ((Date.now() - session.loginAt) > 8 * 60 * 60 * 1000) {
+      clearSession();
+      redirectLogin('Sesi Anda telah berakhir. Silakan login kembali.');
+      return false;
+    }
+    S.user    = session;
+    S.year    = session.year || String(new Date().getFullYear());
+    S.isAdmin = session.role === 'admin';
+    S.userTim = session.role === 'tim' ? session.tim : null;
+    return true;
+  } catch(e) {
+    redirectLogin();
+    return false;
+  }
+}
+
+function clearSession() {
+  sessionStorage.removeItem(CFG.SESSION_KEY);
+  localStorage.removeItem(CFG.SESSION_KEY);
+}
+
+function redirectLogin(msg) {
+  if (msg) sessionStorage.setItem('bpa_login_msg', msg);
+  window.location.href = CFG.LOGIN_URL;
+}
+
+function logout() {
+  closeModal();
+  clearSession();
+  redirectLogin();
+}
+
+function showLogoutModal() {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+<div class="modal-back" onclick="handleBackdropClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:380px">
+    <div class="modal-hdr">
+      <div class="modal-hdr-icon warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+      <div class="modal-hdr-text">
+        <h4>Keluar dari Sistem</h4>
+        <p>Anda akan logout dan diarahkan kembali ke halaman login.</p>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal()">Batal</button>
+      <button class="btn btn-r" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Ya, Keluar
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* Data filter by year & role */
+function filterRisks(rawList) {
+  let list = rawList.filter(r => {
+    const rYear = String(r['Tahun'] || '');
+    return rYear === S.year;
+  });
+  // Tim user only sees their own risks
+  if (!S.isAdmin && S.userTim) {
+    list = list.filter(r => (r['Tim Kerja'] || '') === S.userTim);
+  }
+  return list;
+}
+
+function filterReals(rawList) {
+  // Reals are linked to risks; filter by year via join
+  const riskIds = new Set(S.risks.map(r => r.ID));
+  return rawList.filter(r => riskIds.has(r['ID Risiko']));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RISK MATH
+═══════════════════════════════════════════════════════════ */
+const bobot  = (k,d)  => BOBOT[k+'-'+d] || 0;
+const nilai  = (k,d)  => k * d * bobot(k,d);
+const tingkat= n => n<=4?'Sangat Rendah':n<=9?'Rendah':n<=14?'Sedang':n<=19?'Tinggi':'Sangat Tinggi';
+const selera = n => n<=9 ? 'Dalam batas selera risiko' : 'Di atas batas selera risiko';
+const pilihan= s => s==='Dalam batas selera risiko' ? 'Menerima risiko' : 'Mitigasi Risiko';
+const mxScore= (k,d) => MX[k+'-'+d] || 0;
+const mxColor= s => s<=4?'#1d4ed8':s<=9?'#16a34a':s<=14?'#ca8a04':s<=19?'#ea580c':'#dc2626';
+
+/* ═══════════════════════════════════════════════════════════
+   API
+═══════════════════════════════════════════════════════════ */
+const isLocal = () => CFG.SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbykDf7HeMCimjdshEtBG9wo0rWSjFoyu6erRfWRWN6yFfMUNqOFri5viBp3rdiK7-YJ/exec');
+
+async function api(action, body=null) {
+  if (isLocal()) return localFallback(action, body);
+  try {
+    let res;
+    if (!body) {
+      // Pass year + tim as query params for GET requests
+      const year = S.year || '';
+      const tim  = (!S.isAdmin && S.userTim) ? encodeURIComponent(S.userTim) : '';
+      let url = `${CFG.SCRIPT_URL}?action=${action}&year=${year}`;
+      if (tim) url += `&tim=${tim}`;
+      res = await fetch(url);
+    } else {
+      res = await fetch(CFG.SCRIPT_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({action,...body})
+      });
+    }
+    const j = await res.json();
+    if (j.ok !== undefined ? j.ok : j.success) setApiStatus(true);
+    return j;
+  } catch(e) {
+    setApiStatus(false);
+    return localFallback(action, body);
+  }
+}
+
+/* LocalStorage fallback (offline / unconfigured) */
+const lsGet = k => { try{ return JSON.parse(localStorage.getItem(k)||'[]') }catch{return []} };
+const lsSet = (k,v) => { try{ localStorage.setItem(k,JSON.stringify(v)) }catch{} };
+
+function localFallback(action, body) {
+  switch(action) {
+    case 'ping':
+      return { ok: false };
+    case 'getRisiko':
+      return { ok: true, data: lsGet('bpa_risks') };
+    case 'getReal':
+      return { ok: true, data: lsGet('bpa_reals') };
+    case 'addRisiko': {
+      const list = lsGet('bpa_risks');
+      const id = 'R'+Date.now();
+      const d = body.data;
+      d.ID = id;
+      d['Tahun'] = S.year;
+      d['Status Penanganan'] = 'Belum Dilaksanakan';
+      d['Tanggal Input'] = new Date().toLocaleString('id-ID');
+      list.push(d);
+      lsSet('bpa_risks', list);
+      return { ok: true, id };
+    }
+    case 'deleteRisiko': {
+      // Cek apakah ada realisasi untuk risiko ini
+      const reals = lsGet('bpa_reals');
+      const hasReal = reals.some(r => r['ID Risiko'] === body.id);
+      if (hasReal) {
+        return { ok: false, hasReal: true, error: 'Hapus realisasi penanganan risiko terlebih dahulu.' };
+      }
+      const list = lsGet('bpa_risks').filter(r => r.ID !== body.id);
+      lsSet('bpa_risks', list);
+      return { ok: true };
+    }
+    case 'deleteReal': {
+      const list = lsGet('bpa_reals').filter(r => r['ID Risiko'] !== body.id);
+      lsSet('bpa_reals', list);
+      // Reset status penanganan di risks
+      const risks = lsGet('bpa_risks');
+      const ri = risks.findIndex(r => r.ID === body.id);
+      if (ri>=0) { risks[ri]['Status Penanganan'] = 'Belum Dilaksanakan'; lsSet('bpa_risks',risks); }
+      return { ok: true };
+    }
+    case 'updateReal': {
+      const list = lsGet('bpa_reals');
+      const d = body.data;
+      const idx = list.findIndex(r => r['ID Risiko'] === d['ID Risiko']);
+      if (idx>=0) list[idx]=d; else list.push(d);
+      lsSet('bpa_reals', list);
+      // sync status
+      const risks = lsGet('bpa_risks');
+      const ri = risks.findIndex(r => r.ID === d['ID Risiko']);
+      if (ri>=0) { risks[ri]['Status Penanganan'] = d['Status Penanganan']; lsSet('bpa_risks',risks); }
+      return { ok: true };
+    }
+  }
+  return { ok: false, error: 'unknown action' };
+}
+
+function setApiStatus(ok) {
+  S.apiOk = ok;
+  const chip = document.getElementById('api-chip');
+  const dot  = document.getElementById('api-dot');
+  const txt  = document.getElementById('api-txt');
+  if (!chip) return;
+  dot.className = 'dot' + (ok ? '' : ' off');
+  chip.className = 'tb-chip' + (ok ? '' : (isLocal() ? ' warn' : ' err'));
+  txt.textContent = ok ? 'Sheets Terhubung' : (isLocal() ? 'Mode Lokal' : 'Koneksi Gagal');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DATA LOADING
+═══════════════════════════════════════════════════════════ */
+async function loadAll() {
+  showOv(true);
+  try {
+    const [r1, r2] = await Promise.all([api('getRisiko'), api('getReal')]);
+    if (r1.ok) {
+      S.risks = filterRisks(r1.data || []);
+      setApiStatus(true);
+    }
+    if (r2.ok) {
+      S.reals = filterReals(r2.data || []);
+    }
+  } catch(e) { toast('Gagal load data','err') }
+  showOv(false);
+  render();
+}
+
+/* helper: get real data for a risk ID */
+function getReal(id) {
+  return S.reals.find(r => String(r['ID Risiko']||'') === String(id)) || null;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+const PAGE_META = {
+  dashboard:  ['Dashboard',           'Ringkasan manajemen risiko organisasi'],
+  input:      ['Input Risiko',         'Tambah risiko baru ke register'],
+  peta:       ['Peta Risiko',          'Matriks kemungkinan × dampak 5×5'],
+  realisasi:  ['Input Realisasi',      'Catat realisasi penanganan risiko'],
+  monitoring: ['Monitoring',           'Pantau status seluruh risiko'],
+  laporan:    ['Laporan & Export',     'Unduh laporan dalam berbagai format'],
+};
+
+function go(page) {
+  // Block non-admin from Input Risiko
+  if (page === 'input' && !S.isAdmin) {
+    toast('Akses ditolak — hanya Admin yang dapat mengakses Input Risiko', 'wrn');
+    return;
+  }
+  S.page = page;
+  document.querySelectorAll('.sb-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.p === page));
+  const [t,s] = PAGE_META[page]||['',''];
+  document.getElementById('pg-title').textContent = t;
+  document.getElementById('pg-sub').textContent   = s + (S.year ? ` — Tahun ${S.year}` : '');
+  render();
+}
+
+function render() {
+  const el = document.getElementById('content');
+  el.innerHTML = '';
+  // Force re-animation
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = '';
+  const pages = {dashboard,input,peta,realisasi,monitoring,laporan};
+  (pages[S.page]||dashboard)();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════ */
+function showOv(v) {
+  const el = document.getElementById('ov');
+  if (el) el.style.display = v ? 'flex' : 'none';
+}
+
+function toast(msg, type='ok') {
+  const ICONS = {
+    ok:  '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    err: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+    inf: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+    wrn: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+  };
+  const el = document.createElement('div');
+  el.className = `toast t-${type}`;
+  el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICONS[type]||ICONS.inf}</svg><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),280); }, 3200);
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  try { return new Date(s).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); }
+  catch { return s; }
+}
+
+/* field helpers */
+const f = id => document.getElementById(id);
+const fv = id => { const e=f(id); return e?(e.value||''):''; };
+const fs = (id,v) => { const e=f(id); if(e) e.value=v||''; };
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: DASHBOARD
+═══════════════════════════════════════════════════════════ */
+function dashboard() {
+  const el = document.getElementById('content');
+  const R  = S.risks;
+  const n  = R.length;
+
+  // aggregate
+  const byLv  = {'Sangat Rendah':0,'Rendah':0,'Sedang':0,'Tinggi':0,'Sangat Tinggi':0};
+  const byCat = {}; CATEGORIES.forEach(c=>byCat[c]=0);
+  const byTim = {}; TIMS.forEach(t=>byTim[t]=0);
+  const bySt  = {'Belum Dilaksanakan':0,'Sedang Dilaksanakan':0,'Selesai Dilaksanakan':0};
+  let abv=0, blw=0;
+
+  R.forEach(r => {
+    const lv  = r['Tingkat Risiko']  || tingkat(parseFloat(r['Nilai Risiko'])||0);
+    const cat = r['Kategori Risiko'] || '';
+    const tim = r['Tim Kerja']       || '';
+    const sel = r['Selera Risiko']   || '';
+    const st  = r['Status Penanganan'] || 'Belum Dilaksanakan';
+    if (byLv[lv]  !== undefined) byLv[lv]++;
+    if (byCat[cat]!== undefined) byCat[cat]++;
+    if (byTim[tim]!== undefined) byTim[tim]++;
+    if (bySt[st]  !== undefined) bySt[st]++;
+    sel.includes('atas') ? abv++ : blw++;
+  });
+
+  const high   = (byLv['Tinggi']||0)+(byLv['Sangat Tinggi']||0);
+  const mitiga = R.filter(r=>(r['Pilihan Penanganan']||'').includes('Mitigasi')).length;
+  const CAT_C  = ['#00797f','#c8d92b','#1d4ed8','#ea580c','#7c3aed','#db2777'];
+
+  el.innerHTML = `
+${alertBanner()}
+
+<!-- Stats -->
+<div class="stat-grid">
+  ${statCard('Total Risiko','var(--teal)',n,`${mitiga} perlu mitigasi`,
+    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>','var(--teal-l)','#00797f')}
+  ${statCard('Risiko Kritis','#dc2626',high,'Tinggi + Sangat Tinggi',
+    '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>','#fee2e2','#dc2626')}
+  ${statCard('Di Atas Selera','#ca8a04',abv,'Membutuhkan tindakan',
+    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>','#fef3c7','#ca8a04')}
+  ${statCard('Selesai Ditangani','#16a34a',bySt['Selesai Dilaksanakan']||0,`dari ${n} risiko`,
+    '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>','#dcfce7','#16a34a')}
+</div>
+
+<!-- Charts row -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+  <div class="card">
+    <div class="ch"><div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h3>Tingkat Risiko</h3></div>
+    <div class="cb">
+      ${Object.entries(byLv).map(([lv,cnt])=>`
+        <div class="cbar">
+          <div class="cbar-lbl">${lv}</div>
+          <div class="cbar-track"><div class="cbar-fill" style="width:${n?Math.round(cnt/n*100):0}%;background:${LEVEL_COLOR[lv]||'#ccc'}"></div></div>
+          <div class="cbar-num" style="color:${LEVEL_COLOR[lv]||'#ccc'}">${cnt}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div><h3>Kategori Risiko</h3></div>
+    <div class="cb">
+      ${CATEGORIES.map((c,i)=>`
+        <div class="cbar">
+          <div class="cbar-lbl" style="font-size:11px">${c}</div>
+          <div class="cbar-track"><div class="cbar-fill" style="width:${n?Math.round((byCat[c]||0)/n*100):0}%;background:${CAT_C[i]}"></div></div>
+          <div class="cbar-num" style="color:${CAT_C[i]}">${byCat[c]||0}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<!-- Bottom row -->
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+  <div class="card">
+    <div class="ch"><div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3>Risiko per Tim Kerja</h3></div>
+    <div class="cb">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px">
+        ${TIMS.map(t=>`
+          <div style="text-align:center;padding:9px 6px;border-radius:8px;background:var(--surf2);border:1px solid var(--border)">
+            <div style="font-size:20px;font-weight:800;color:var(--teal)">${byTim[t]||0}</div>
+            <div style="font-size:9.5px;color:var(--text-m);margin-top:3px;line-height:1.3">${t.replace('Tim Kerja ','')}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Status Penanganan</h3></div>
+    <div class="cb">
+      ${[
+        ['Belum Dilaksanakan','#dc2626','#fee2e2'],
+        ['Sedang Dilaksanakan','#ea580c','#ffedd5'],
+        ['Selesai Dilaksanakan','#16a34a','#dcfce7']
+      ].map(([lb,c,bg])=>`
+        <div style="background:${bg};border-radius:8px;padding:11px 14px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11.5px;font-weight:600;color:${c}">${lb}</span>
+          <span style="font-size:20px;font-weight:800;color:${c}">${bySt[lb]||0}</span>
+        </div>`).join('')}
+      <div style="padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font-size:11px;color:var(--text-m)">Dalam Selera</span>
+        <span style="font-size:12px;font-weight:700;color:#16a34a">${blw}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <span style="font-size:11px;color:var(--text-m)">Di Atas Selera</span>
+        <span style="font-size:12px;font-weight:700;color:#dc2626">${abv}</span>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function statCard(lbl, color, val, sub, iconPath, icoBg, icoColor) {
+  return `<div class="stat" style="--accent-color:${color}">
+    <div class="stat-ico" style="background:${icoBg}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="${icoColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
+    </div>
+    <div class="stat-lbl">${lbl}</div>
+    <div class="stat-val" style="color:${color}">${val}</div>
+    <div class="stat-sub">${sub}</div>
+  </div>`;
+}
+
+function alertBanner() {
+  if (!isLocal()) return '';
+  return `<div class="alert alert-warn" style="margin-bottom:16px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div>
+      <div class="a-title">⚙️ Integrasi Google Sheets belum dikonfigurasi</div>
+      <div class="a-body">Aplikasi berjalan dalam <strong>mode lokal</strong> (data di browser). Untuk sinkronisasi ke Sheets, deploy <code>Code.gs</code> sebagai Google Apps Script Web App, lalu ganti nilai <code>SCRIPT_URL</code> di bagian <code>CFG</code> dalam <code>index.html</code>. Lihat <strong>PANDUAN.md</strong> untuk panduan lengkap.</div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: INPUT RISIKO
+═══════════════════════════════════════════════════════════ */
+function input() {
+  const el = document.getElementById('content');
+
+  // Access guard
+  if (!S.isAdmin) {
+    el.innerHTML = `<div class="card" style="max-width:500px"><div class="cb">
+      <div class="empty" style="padding:52px 20px">
+        <div class="empty-ico" style="background:#fee2e2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="width:24px;height:24px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h4 style="color:#dc2626">Akses Ditolak</h4>
+        <p>Halaman Input Risiko hanya dapat diakses oleh <strong>Admin</strong>.<br>Silakan hubungi administrator jika ada pertanyaan.</p>
+      </div>
+    </div></div>`;
+    return;
+  }
+  el.innerHTML = `
+${alertBanner()}
+<div style="display:grid;gap:18px;max-width:920px">
+
+  <!-- Form Card -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      <h3>Formulir Input Risiko Baru</h3>
+    </div>
+    <div class="cb">
+    <form id="frm" onsubmit="submitRisiko(event)">
+
+      <div class="fsec">
+        <div class="fsec-title"><div class="fsec-num">1</div>Identifikasi Risiko</div>
+        <div class="grid g2">
+          <div class="fg">
+            <label class="fl">Kode Risiko <span class="req">*</span></label>
+            <input id="fKode" type="text" required placeholder="Contoh: R-BPA-001">
+          </div>
+          <div class="fg">
+            <label class="fl">Kategori Risiko <span class="req">*</span></label>
+            <select id="fKat" required>
+              <option value="">— Pilih Kategori —</option>
+              ${CATEGORIES.map(c=>`<option>${c}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg span2">
+            <label class="fl">Uraian Risiko <span class="req">*</span></label>
+            <textarea id="fUraian" required rows="2" placeholder="Deskripsikan risiko secara spesifik dan terukur"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Penyebab Risiko <span class="req">*</span></label>
+            <textarea id="fPenyebab" required rows="2" placeholder="Apa yang menyebabkan risiko ini terjadi?"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Dampak Risiko <span class="req">*</span></label>
+            <textarea id="fDampak" required rows="2" placeholder="Apa akibat jika risiko ini terjadi?"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Sumber Risiko <span class="req">*</span></label>
+            <select id="fSumber" required>
+              <option value="">— Pilih —</option>
+              ${SUMBER.map(s=>`<option>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Tim Kerja Penanggung Jawab <span class="req">*</span></label>
+            <select id="fTim" required>
+              <option value="">— Pilih Tim —</option>
+              ${TIMS.map(t=>`<option>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><div class="fsec-num">2</div>Pengendalian Saat Ini</div>
+        <div class="grid g2">
+          <div class="fg">
+            <label class="fl">Uraian Pengendalian <span class="req">*</span></label>
+            <textarea id="fPengendalian" required rows="2" placeholder="Pengendalian yang sudah ada saat ini"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Efektivitas Pengendalian <span class="req">*</span></label>
+            <select id="fEfek" required>
+              <option value="">— Pilih —</option>
+              ${EFEK.map(e=>`<option>${e}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><div class="fsec-num">3</div>Penilaian Risiko Saat Ini</div>
+        <div class="grid g5">
+          <div class="fg">
+            <label class="fl">Level Kemungkinan <span class="req">*</span></label>
+            <select id="fK" required onchange="calcRisk()">
+              <option value="">—</option>
+              ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Level Dampak <span class="req">*</span></label>
+            <select id="fD" required onchange="calcRisk()">
+              <option value="">—</option>
+              ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Bobot Dampak</label>
+            <input id="fBobot" readonly value="—">
+          </div>
+          <div class="fg">
+            <label class="fl">Nilai Risiko</label>
+            <input id="fNilai" readonly value="—">
+          </div>
+          <div class="fg">
+            <label class="fl">Tingkat Risiko</label>
+            <input id="fTingkat" readonly value="—">
+          </div>
+        </div>
+        <div class="grid g2" style="margin-top:10px">
+          <div class="fg">
+            <label class="fl">Selera Risiko</label>
+            <input id="fSelera" readonly value="—">
+          </div>
+          <div class="fg">
+            <label class="fl">Pilihan Penanganan</label>
+            <input id="fPilihan" readonly value="—">
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><div class="fsec-num">4</div>Rencana Penanganan</div>
+        <div class="grid g2">
+          <div class="fg span2">
+            <label class="fl">Uraian Rencana Penanganan</label>
+            <textarea id="fRencana" rows="2" placeholder="Isi jika Mitigasi Risiko diperlukan"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Jadwal Penanganan</label>
+            <input id="fJadwal" type="date">
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><div class="fsec-num">5</div>Target Penurunan Risiko</div>
+        <div class="grid g5">
+          <div class="fg">
+            <label class="fl">Target Kemungkinan</label>
+            <select id="fTK" onchange="calcTarget()">
+              <option value="">—</option>
+              ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Target Dampak</label>
+            <select id="fTD" onchange="calcTarget()">
+              <option value="">—</option>
+              ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Target Bobot</label>
+            <input id="fTBobot" readonly value="—">
+          </div>
+          <div class="fg">
+            <label class="fl">Target Nilai</label>
+            <input id="fTNilai" readonly value="—">
+          </div>
+          <div class="fg">
+            <label class="fl">Target Tingkat</label>
+            <input id="fTTingkat" readonly value="—">
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:9px;padding-top:4px">
+        <button type="submit" class="btn btn-p btn-lg" id="btnSubmit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Simpan Risiko
+        </button>
+        <button type="reset" class="btn btn-g btn-lg" onclick="resetInputForm()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.51"/></svg>
+          Reset
+        </button>
+      </div>
+
+    </form>
+    </div>
+  </div>
+
+  <!-- Register table -->
+  <div class="card" id="reg-card">
+    <div class="ch" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <h3 id="reg-h3">Register Risiko (${S.risks.length})</h3>
+      </div>
+    </div>
+    <div class="cb" style="padding-top:12px" id="reg-body">
+      ${buildRegTable()}
+    </div>
+  </div>
+
+</div>`;
+}
+
+function calcRisk() {
+  const k = parseInt(fv('fK'))||0, d = parseInt(fv('fD'))||0;
+  if (k && d) {
+    const b = bobot(k,d), n = nilai(k,d), t = tingkat(n), sel = selera(n), pil = pilihan(sel);
+    fs('fBobot', b.toFixed(2));
+    fs('fNilai', n.toFixed(2));
+    fs('fTingkat', t);
+    fs('fSelera', sel);
+    fs('fPilihan', pil);
+    const rEl = f('fRencana'), jEl = f('fJadwal');
+    if (pil === 'Menerima risiko') {
+      rEl.value = 'Rencana Penanganan Risiko Tidak Diperlukan';
+      rEl.disabled = true; jEl.disabled = true;
+    } else {
+      if (rEl.value === 'Rencana Penanganan Risiko Tidak Diperlukan') rEl.value = '';
+      rEl.disabled = false; jEl.disabled = false;
+    }
+  } else {
+    ['fBobot','fNilai','fTingkat','fSelera','fPilihan'].forEach(id=>fs(id,'—'));
+    f('fRencana').disabled = false; f('fJadwal').disabled = false;
+  }
+}
+
+function calcTarget() {
+  const k = parseInt(fv('fTK'))||0, d = parseInt(fv('fTD'))||0;
+  if (k && d) {
+    const b=bobot(k,d), n=nilai(k,d);
+    fs('fTBobot', b.toFixed(2)); fs('fTNilai', n.toFixed(2)); fs('fTTingkat', tingkat(n));
+  } else {
+    ['fTBobot','fTNilai','fTTingkat'].forEach(id=>fs(id,'—'));
+  }
+}
+
+function resetInputForm() {
+  ['fBobot','fNilai','fTingkat','fSelera','fPilihan','fTBobot','fTNilai','fTTingkat']
+    .forEach(id=>fs(id,'—'));
+  const r=f('fRencana'); if(r){r.disabled=false;r.value='';}
+  const j=f('fJadwal');  if(j){j.disabled=false;}
+}
+
+async function submitRisiko(e) {
+  e.preventDefault();
+  const btn = f('btnSubmit');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spin" style="width:16px;height:16px;border-width:2px"></div> Menyimpan...`;
+
+  const k = parseInt(fv('fK')), d = parseInt(fv('fD'));
+  const b = bobot(k,d), n = nilai(k,d), t = tingkat(n), sel = selera(n), pil = pilihan(sel);
+  const tk = parseInt(fv('fTK'))||0, td = parseInt(fv('fTD'))||0;
+
+  const data = {
+    'Kode Risiko':            fv('fKode').trim(),
+    'Uraian Risiko':          fv('fUraian').trim(),
+    'Kategori Risiko':        fv('fKat'),
+    'Penyebab Risiko':        fv('fPenyebab').trim(),
+    'Dampak Risiko':          fv('fDampak').trim(),
+    'Sumber Risiko':          fv('fSumber'),
+    'Pengendalian Risiko':    fv('fPengendalian').trim(),
+    'Efektivitas Pengendalian': fv('fEfek'),
+    'Level Kemungkinan':      k,
+    'Level Dampak':           d,
+    'Bobot Dampak':           b,
+    'Nilai Risiko':           n,
+    'Tingkat Risiko':         t,
+    'Selera Risiko':          sel,
+    'Pilihan Penanganan':     pil,
+    'Rencana Penanganan':     fv('fRencana').trim() || (pil==='Menerima risiko'?'Rencana Penanganan Risiko Tidak Diperlukan':''),
+    'Jadwal Penanganan':      fv('fJadwal'),
+    'Target Kemungkinan':     tk||'',
+    'Target Dampak':          td||'',
+    'Target Bobot':           tk&&td ? bobot(tk,td) : '',
+    'Target Nilai':           tk&&td ? nilai(tk,td) : '',
+    'Target Tingkat':         tk&&td ? tingkat(nilai(tk,td)) : '',
+    'Tim Kerja':              fv('fTim'),
+    'Tahun':                  S.year,
+  };
+
+  const res = await api('addRisiko', { data });
+
+  if (res.ok) {
+    data.ID = res.id || 'R'+Date.now();
+    data['Status Penanganan'] = 'Belum Dilaksanakan';
+    data['Tahun'] = S.year;
+    S.risks.push(data);
+    f('frm').reset();
+    resetInputForm();
+    // update table & header
+    const hEl = f('reg-h3'); if(hEl) hEl.textContent = `Register Risiko (${S.risks.length})`;
+    const bEl = f('reg-body'); if(bEl) bEl.innerHTML = buildRegTable();
+    toast('Risiko berhasil disimpan!', 'ok');
+  } else {
+    toast('Gagal: '+(res.error||'Coba lagi'), 'err');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Simpan Risiko`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════════════════════ */
+function closeModal() {
+  const root = document.getElementById('modal-root');
+  if (root) root.innerHTML = '';
+}
+
+/* Modal: konfirmasi hapus ketika TIDAK ada realisasi */
+function showConfirmDeleteModal(riskId, kode, uraian) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+<div class="modal-back" onclick="handleBackdropClick(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hdr">
+      <div class="modal-hdr-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <div class="modal-hdr-text">
+        <h4>Hapus Risiko dari Register</h4>
+        <p>Tindakan ini <strong>tidak dapat dibatalkan</strong>. Risiko akan dihapus permanen dari register.</p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info-box">
+        <div class="modal-info-row">
+          <span>Kode Risiko</span>
+          <span class="mono" style="color:var(--teal)">${kode}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Uraian</span>
+          <span style="max-width:260px;text-align:right;line-height:1.4">${uraian}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Status Realisasi</span>
+          <span style="color:#16a34a;display:flex;align-items:center;gap:5px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;color:#16a34a"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Tidak ada realisasi
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal()">Batal</button>
+      <button class="btn btn-r" onclick="confirmDeleteRisiko('${riskId}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Ya, Hapus Risiko
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* Modal: BLOKIR hapus karena masih ada realisasi */
+function showBlockedDeleteModal(riskId, kode, uraian, realData) {
+  const st   = realData['Status Penanganan'] || '—';
+  const efek = realData['Efektivitas'] || '—';
+  const kes  = realData['Kesimpulan']  || '—';
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+<div class="modal-back" onclick="handleBackdropClick(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hdr">
+      <div class="modal-hdr-icon warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="modal-hdr-text">
+        <h4>Tidak Dapat Menghapus Risiko</h4>
+        <p>Risiko ini memiliki data realisasi penanganan yang aktif. Hapus realisasinya terlebih dahulu.</p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info-box">
+        <div class="modal-info-row">
+          <span>Kode Risiko</span>
+          <span class="mono" style="color:var(--teal)">${kode}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Uraian</span>
+          <span style="max-width:240px;text-align:right;line-height:1.4">${uraian}</span>
+        </div>
+        <div style="height:1px;background:var(--border);margin:6px 0"></div>
+        <div class="modal-info-row">
+          <span>Status Penanganan</span>
+          <span class="sp ${STATUS_CLS[st]||'b-gray'}">${st}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Kesimpulan</span>
+          <span>${kes}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Efektivitas</span>
+          <span style="font-weight:700;color:${efek==='Efektif'?'#16a34a':efek==='Tidak Efektif'?'#dc2626':'#94a3b8'}">${efek}</span>
+        </div>
+      </div>
+      <div class="modal-warn-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p><strong>Urutan penghapusan yang benar:</strong><br>
+        1. Hapus data realisasi penanganan risiko ini terlebih dahulu.<br>
+        2. Setelah realisasi dihapus, baru risiko dapat dihapus dari register.</p>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal()">Tutup</button>
+      <button class="btn" style="background:#fef3c7;color:#92400e;border:1.5px solid #f59e0b" onclick="confirmDeleteReal('${riskId}', '${kode}', \`${uraian.replace(/`/g,"'")}\`)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Hapus Realisasi Dulu
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* Modal: konfirmasi hapus realisasi */
+function confirmDeleteReal(riskId, kode, uraian) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+<div class="modal-back" onclick="handleBackdropClick(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hdr">
+      <div class="modal-hdr-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <div class="modal-hdr-text">
+        <h4>Hapus Data Realisasi</h4>
+        <p>Data realisasi penanganan untuk risiko ini akan dihapus permanen. Status penanganan akan direset.</p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info-box">
+        <div class="modal-info-row">
+          <span>Kode Risiko</span>
+          <span class="mono" style="color:var(--teal)">${kode}</span>
+        </div>
+        <div class="modal-info-row">
+          <span>Uraian</span>
+          <span style="max-width:260px;text-align:right;line-height:1.4">${uraian}</span>
+        </div>
+      </div>
+      <div class="modal-warn-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <p>Setelah realisasi dihapus, Anda dapat menghapus risiko dari register <strong>atau membiarkannya</strong> jika hanya ingin mengosongkan data realisasi.</p>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeModal()">Batal</button>
+      <button class="btn btn-r" onclick="execDeleteReal('${riskId}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Ya, Hapus Realisasi
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+function handleBackdropClick(e) {
+  if (e.target === e.currentTarget) closeModal();
+}
+
+/* ── DELETE ACTIONS ── */
+async function deleteRisiko(id) {
+  const risk = S.risks.find(r => r.ID === id);
+  if (!risk) return;
+  const kode   = risk['Kode Risiko']  || '—';
+  const uraian = risk['Uraian Risiko'] || '—';
+
+  // Cek apakah ada realisasi di state lokal
+  const realData = getReal(id);
+  if (realData) {
+    showBlockedDeleteModal(id, kode, uraian, realData);
+    return;
+  }
+
+  // Tidak ada realisasi — tampilkan konfirmasi biasa
+  showConfirmDeleteModal(id, kode, uraian);
+}
+
+async function confirmDeleteRisiko(id) {
+  closeModal();
+  const res = await api('deleteRisiko', { id });
+  if (res.ok) {
+    S.risks = S.risks.filter(r => r.ID !== id);
+    toast('Risiko berhasil dihapus dari register', 'inf');
+    render();
+  } else if (res.hasReal) {
+    // Race condition: realisasi baru ditambahkan setelah cek lokal
+    toast('Hapus realisasi terlebih dahulu', 'wrn');
+    await loadAll();
+  } else {
+    toast('Gagal menghapus: ' + (res.error||''), 'err');
+  }
+}
+
+async function execDeleteReal(riskId) {
+  closeModal();
+  const res = await api('deleteReal', { id: riskId });
+  if (res.ok) {
+    // Hapus dari state lokal
+    S.reals = S.reals.filter(r => r['ID Risiko'] !== riskId);
+    // Reset status di risks state
+    const ri = S.risks.findIndex(r => r.ID === riskId);
+    if (ri >= 0) S.risks[ri]['Status Penanganan'] = 'Belum Dilaksanakan';
+    toast('Realisasi berhasil dihapus. Risiko kini dapat dihapus.', 'ok');
+    render();
+  } else {
+    toast('Gagal menghapus realisasi: ' + (res.error||''), 'err');
+  }
+}
+
+function buildRegTable() {
+  if (!S.risks.length) return `<div class="empty">
+    <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+    <h4>Belum ada data risiko</h4>
+    <p>Tambah risiko baru menggunakan formulir di atas.</p>
+  </div>`;
+  return `<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Kode</th><th>Uraian</th><th>Kategori</th>
+      <th style="text-align:center">K</th><th style="text-align:center">D</th>
+      <th>Tingkat</th><th>Selera</th><th>Tim Kerja</th><th>Realisasi</th>
+      <th style="text-align:center">Aksi</th>
+    </tr></thead>
+    <tbody>
+    ${S.risks.map(r=>{
+      const id      = r.ID||'';
+      const kode    = (r['Kode Risiko']||'').replace(/'/g,"\\'");
+      const uraian  = (r['Uraian Risiko']||'').replace(/'/g,"\\'");
+      const lv      = r['Tingkat Risiko']||'';
+      const sel     = r['Selera Risiko']||'';
+      const tim     = (r['Tim Kerja']||'').replace('Tim Kerja ','');
+      const hasReal = !!getReal(id);
+
+      // Delete button: jika ada realisasi → tombol kuning dengan ikon peringatan
+      const delBtn = hasReal
+        ? `<button onclick="deleteRisiko('${id}')" class="btn btn-sm" title="Risiko ini memiliki realisasi — hapus realisasi terlebih dahulu"
+            style="background:#fef3c7;color:#92400e;border:1.5px solid #f59e0b">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>`
+        : `<button onclick="deleteRisiko('${id}')" class="btn btn-r btn-sm" title="Hapus risiko">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>`;
+
+      // Realisasi badge
+      const realBadge = hasReal
+        ? `<span class="badge" style="background:#dcfce7;color:#15803d;display:inline-flex;align-items:center;gap:4px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Ada
+          </span>`
+        : `<span class="badge b-gray" style="font-size:10px">Belum</span>`;
+
+      return `<tr>
+        <td class="mono" style="font-weight:700;color:var(--teal);font-size:12px">${r['Kode Risiko']||'—'}</td>
+        <td class="truncate" style="max-width:175px" title="${r['Uraian Risiko']||''}">${r['Uraian Risiko']||'—'}</td>
+        <td style="font-size:11px">${r['Kategori Risiko']||'—'}</td>
+        <td style="text-align:center;font-weight:700">${r['Level Kemungkinan']||'—'}</td>
+        <td style="text-align:center;font-weight:700">${r['Level Dampak']||'—'}</td>
+        <td><span class="badge ${LEVEL_BADGE[lv]||'b-gray'}">${lv||'—'}</span></td>
+        <td style="font-size:11px;font-weight:600;color:${sel.includes('atas')?'#dc2626':'#16a34a'}">${sel.includes('atas')?'Di Atas':'Dalam Batas'}</td>
+        <td style="font-size:11px">${tim||'—'}</td>
+        <td>${realBadge}</td>
+        <td style="text-align:center">${delBtn}</td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: PETA RISIKO
+═══════════════════════════════════════════════════════════ */
+function peta() {
+  const el = document.getElementById('content');
+  // build cell map
+  const cells = {};
+  S.risks.forEach(r=>{
+    const k=parseInt(r['Level Kemungkinan']||0), d=parseInt(r['Level Dampak']||0);
+    if(k&&d){ const key=k+'-'+d; if(!cells[key]) cells[key]=[]; cells[key].push(r); }
+  });
+
+  // matrix rows (k=5 top → k=1 bottom, d=1 left → d=5 right)
+  let mRows = '';
+  for (let k=5;k>=1;k--) {
+    mRows += `<div class="mx-lbl">${k}</div>`;
+    for (let d=1;d<=5;d++) {
+      const sc = mxScore(k,d);
+      const rc = mxColor(sc);
+      const rs = cells[k+'-'+d]||[];
+      mRows += `<div class="mx-cell" style="background:${rc}" title="K=${k}, D=${d} — Skor ${sc} — ${tingkat(nilai(k,d))}">
+        ${sc}
+        ${rs.length?`<div class="mc-cnt" style="color:${rc}">${rs.length}</div>`:''}
+      </div>`;
+    }
+  }
+
+  el.innerHTML = `
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start">
+  <!-- Matrix card -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <h3>Matriks Risiko 5 × 5</h3>
+    </div>
+    <div class="cb">
+      <div class="mx-axis-lbl" style="margin-bottom:4px">→ DAMPAK</div>
+      <div class="mx-wrap">
+        <div class="mx-grid">
+          <div></div>
+          ${[1,2,3,4,5].map(d=>`<div class="mx-clbl">${d}</div>`).join('')}
+          ${mRows}
+        </div>
+      </div>
+      <div class="mx-axis-lbl" style="margin-top:8px">↑ KEMUNGKINAN</div>
+
+      <!-- Legend -->
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        ${[['#1d4ed8','Sangat Rendah','1–4'],['#16a34a','Rendah','5–9'],['#ca8a04','Sedang','10–14'],['#ea580c','Tinggi','15–19'],['#dc2626','Sangat Tinggi','20–25']].map(([c,l,s])=>`
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:12px;height:12px;border-radius:3px;background:${c};flex-shrink:0"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-s)">${l} <span style="color:var(--text-m);font-weight:400">(${s})</span></span>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk list by cell -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h3>Risiko per Sel</h3>
+    </div>
+    <div class="cb" style="max-height:500px;overflow-y:auto">
+      ${Object.keys(cells).length===0
+        ? `<div class="empty" style="padding:30px 10px"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><h4>Belum ada data</h4><p>Tambahkan risiko di Input Risiko</p></div>`
+        : Object.entries(cells).sort((a,b)=>{
+            const [ak,ad]=a[0].split('-').map(Number),[bk,bd]=b[0].split('-').map(Number);
+            return mxScore(bk,bd)-mxScore(ak,ad);
+          }).map(([key,rs])=>{
+            const [k,d]=key.split('-').map(Number);
+            const sc=mxScore(k,d),rc=mxColor(sc),lv=tingkat(nilai(k,d));
+            return `<div style="margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <div style="background:${rc};color:#fff;font-weight:800;font-size:12.5px;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${sc}</div>
+                <div><div style="font-size:12px;font-weight:700">K=${k}, D=${d}</div><div style="font-size:10.5px;color:var(--text-m)">${lv} · ${rs.length} risiko</div></div>
+              </div>
+              ${rs.map(r=>`<div style="padding:6px 8px;background:var(--surf2);border-radius:6px;border-left:3px solid ${rc};margin-bottom:3px">
+                <div style="font-size:11.5px;font-weight:700;color:var(--text)">${r['Kode Risiko']||'—'}</div>
+                <div class="truncate" style="font-size:10.5px;color:var(--text-s)">${r['Uraian Risiko']||'—'}</div>
+              </div>`).join('')}
+            </div>`;
+          }).join('')
+      }
+    </div>
+  </div>
+</div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: REALISASI
+═══════════════════════════════════════════════════════════ */
+function realisasi() {
+  const el = document.getElementById('content');
+  if (!S.risks.length) {
+    el.innerHTML = `<div class="card"><div class="cb"><div class="empty">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <h4>Belum ada data risiko</h4>
+      <p>Tambahkan risiko di menu Input Risiko terlebih dahulu.</p>
+    </div></div></div>`;
+    return;
+  }
+
+  el.innerHTML = `
+<div style="max-width:920px">
+<div class="card">
+  <div class="ch">
+    <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+    <h3>Input Realisasi Penanganan Risiko</h3>
+  </div>
+  <div class="cb">
+  <form id="frmReal" onsubmit="submitReal(event)">
+
+    <div class="fsec">
+      <div class="fsec-title"><div class="fsec-num">1</div>Pilih Tim Kerja &amp; Risiko</div>
+      <div class="grid g2">
+        <div class="fg">
+          <label class="fl">Tim Kerja <span class="req">*</span></label>
+          <select id="rTim" required onchange="onTimChange()">
+            <option value="">— Pilih Tim Kerja —</option>
+            ${TIMS.map(t=>`<option>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Kode Risiko <span class="req">*</span></label>
+          <select id="rKode" required onchange="onRisikoChange()">
+            <option value="">— Pilih setelah memilih tim —</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div class="fsec-title"><div class="fsec-num">2</div>Informasi Risiko (Otomatis)</div>
+      <div class="fg" style="margin-bottom:10px">
+        <label class="fl">Uraian Risiko</label>
+        <textarea id="rUraian" readonly rows="2"></textarea>
+      </div>
+      <div class="grid g3">
+        <div class="fg"><label class="fl">Kemungkinan (P)</label><input id="rPawal" readonly></div>
+        <div class="fg"><label class="fl">Dampak (D)</label><input id="rDawal" readonly></div>
+        <div class="fg"><label class="fl">Nilai Risiko</label><input id="rNAwal" readonly></div>
+        <div class="fg"><label class="fl">Tingkat</label><input id="rTAwal" readonly></div>
+        <div class="fg"><label class="fl">Selera</label><input id="rSAwal" readonly></div>
+        <div class="fg"><label class="fl">Pilihan Penanganan</label><input id="rPiAwal" readonly></div>
+      </div>
+      <div class="fg" style="margin-top:10px">
+        <label class="fl">Jadwal Penanganan</label>
+        <input id="rJadwal" readonly>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div class="fsec-title"><div class="fsec-num">3</div>Status &amp; Realisasi</div>
+      <div class="grid g2">
+        <div class="fg">
+          <label class="fl">Status Penanganan <span class="req">*</span></label>
+          <select id="rStatus" required>
+            <option value="">— Pilih —</option>
+            <option>Belum Dilaksanakan</option>
+            <option>Sedang Dilaksanakan</option>
+            <option>Selesai Dilaksanakan</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:10px">
+        <label class="fl">Uraian Realisasi Penanganan <span class="req">*</span></label>
+        <textarea id="rUraianReal" required rows="3" placeholder="Deskripsikan penanganan yang telah atau sedang dilakukan..."></textarea>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div class="fsec-title"><div class="fsec-num">4</div>Status Risiko Setelah Penanganan</div>
+      <div class="grid g3">
+        <div class="fg">
+          <label class="fl">Kemungkinan (P) Sesudah <span class="req">*</span></label>
+          <select id="rPs" required onchange="calcSesudah()">
+            <option value="">—</option>
+            ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Dampak (D) Sesudah <span class="req">*</span></label>
+          <select id="rDs" required onchange="calcSesudah()">
+            <option value="">—</option>
+            ${[1,2,3,4,5].map(i=>`<option>${i}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Nilai Risiko Sesudah</label><input id="rNs" readonly></div>
+        <div class="fg"><label class="fl">Tingkat Sesudah</label><input id="rTs" readonly></div>
+        <div class="fg"><label class="fl">Selera Sesudah</label><input id="rSs" readonly></div>
+        <div class="fg"><label class="fl">Pilihan Sesudah</label><input id="rPis" readonly></div>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div class="fsec-title"><div class="fsec-num">5</div>Kesimpulan &amp; Efektivitas (Otomatis)</div>
+      <div class="grid g2">
+        <div class="fg"><label class="fl">Kesimpulan</label><input id="rKesimpulan" readonly></div>
+        <div class="fg"><label class="fl">Efektivitas</label><input id="rEfektivitas" readonly></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:9px">
+      <button type="submit" class="btn btn-p btn-lg" id="btnReal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Simpan Realisasi
+      </button>
+      <button type="button" class="btn btn-g btn-lg" onclick="resetReal()">Reset</button>
+    </div>
+  </form>
+  </div>
+</div>
+</div>`;
+}
+
+function onTimChange() {
+  const tim = fv('rTim');
+  const sel = f('rKode');
+  sel.innerHTML = '<option value="">— Pilih Kode Risiko —</option>';
+  S.selRisk = null;
+  clearRealFields();
+  if (!tim) return;
+  S.risks.filter(r=>(r['Tim Kerja']||'')===tim).forEach(r=>{
+    const opt=document.createElement('option');
+    opt.value = r.ID||'';
+    const uraian=(r['Uraian Risiko']||'').substring(0,50);
+    opt.textContent = `${r['Kode Risiko']||'?'} — ${uraian}${uraian.length>=50?'...':''}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onRisikoChange() {
+  const id = fv('rKode');
+  if (!id) { S.selRisk=null; clearRealFields(); return; }
+  const r = S.risks.find(x=>x.ID===id);
+  if (!r) return;
+  S.selRisk = r;
+
+  const k=parseInt(r['Level Kemungkinan'])||0, d=parseInt(r['Level Dampak'])||0;
+  const n=parseFloat(r['Nilai Risiko'])||nilai(k,d);
+  fs('rUraian',  r['Uraian Risiko']||'');
+  fs('rPawal',   k||'—'); fs('rDawal', d||'—');
+  fs('rNAwal',   n?n.toFixed(2):'—');
+  fs('rTAwal',   r['Tingkat Risiko']||tingkat(n));
+  fs('rSAwal',   r['Selera Risiko'] ||selera(n));
+  fs('rPiAwal',  r['Pilihan Penanganan']||pilihan(selera(n)));
+  fs('rJadwal',  fmtDate(r['Jadwal Penanganan']));
+
+  // pre-fill existing realisasi
+  const ex = getReal(id);
+  if (ex) {
+    fs('rStatus',    ex['Status Penanganan']||'');
+    fs('rUraianReal',ex['Uraian Realisasi']||'');
+    fs('rPs', ex['P Sesudah']||'');
+    fs('rDs', ex['D Sesudah']||'');
+    if (ex['P Sesudah']&&ex['D Sesudah']) calcSesudah();
+  }
+}
+
+function calcSesudah() {
+  const p=parseInt(fv('rPs'))||0, d=parseInt(fv('rDs'))||0;
+  if (!p||!d||!S.selRisk) {
+    ['rNs','rTs','rSs','rPis','rKesimpulan','rEfektivitas'].forEach(id=>{const e=f(id);if(e){e.value='';e.style.color=''}});
+    return;
+  }
+  const n=nilai(p,d), t=tingkat(n), sel=selera(n), pil=pilihan(sel);
+  fs('rNs',n.toFixed(2)); fs('rTs',t); fs('rSs',sel); fs('rPis',pil);
+
+  const pA=parseInt(S.selRisk['Level Kemungkinan'])||0;
+  const dA=parseInt(S.selRisk['Level Dampak'])||0;
+  let kes='Level Kemungkinan dan Dampak Tetap';
+  if (p<pA&&d===dA) kes='Level Kemungkinan Turun';
+  else if (p===pA&&d<dA) kes='Level Dampak Turun';
+  else if (p<pA&&d<dA) kes='Level Dampak dan Kemungkinan Turun';
+  fs('rKesimpulan',kes);
+
+  const efek = ['Level Dampak Turun','Level Kemungkinan Turun','Level Dampak dan Kemungkinan Turun'].includes(kes)?'Efektif':'Tidak Efektif';
+  const eEl = f('rEfektivitas');
+  if (eEl) { eEl.value=efek; eEl.style.color=efek==='Efektif'?'#16a34a':'#dc2626'; }
+}
+
+function clearRealFields() {
+  ['rUraian','rPawal','rDawal','rNAwal','rTAwal','rSAwal','rPiAwal','rJadwal',
+   'rNs','rTs','rSs','rPis','rKesimpulan','rEfektivitas'].forEach(id=>{
+    const e=f(id); if(e){e.value='';e.style.color=''}
+  });
+}
+
+function resetReal() {
+  const frm=f('frmReal'); if(frm) frm.reset();
+  S.selRisk=null; clearRealFields();
+  const sel=f('rKode'); if(sel) sel.innerHTML='<option value="">— Pilih setelah memilih tim —</option>';
+}
+
+async function submitReal(e) {
+  e.preventDefault();
+  if (!S.selRisk) { toast('Pilih risiko terlebih dahulu','err'); return; }
+  const btn=f('btnReal');
+  btn.disabled=true;
+  btn.innerHTML=`<div class="spin" style="width:16px;height:16px;border-width:2px"></div> Menyimpan...`;
+
+  const p=parseInt(fv('rPs'))||0, d=parseInt(fv('rDs'))||0;
+  const data = {
+    'ID Risiko':         S.selRisk.ID||'',
+    'Kode Risiko':       S.selRisk['Kode Risiko']||'',
+    'Uraian Risiko':     S.selRisk['Uraian Risiko']||'',
+    'Tim Kerja':         S.selRisk['Tim Kerja']||'',
+    'Tahun':             S.year||'',
+    'Status Penanganan': fv('rStatus'),
+    'Uraian Realisasi':  fv('rUraianReal').trim(),
+    'P Sesudah':         p||'',
+    'D Sesudah':         d||'',
+    'Nilai Sesudah':     p&&d ? nilai(p,d) : '',
+    'Tingkat Sesudah':   fv('rTs'),
+    'Selera Sesudah':    fv('rSs'),
+    'Kesimpulan':        fv('rKesimpulan'),
+    'Efektivitas':       fv('rEfektivitas'),
+  };
+
+  const res = await api('updateReal', { data });
+  if (res.ok) {
+    // update local state
+    const idx=S.reals.findIndex(r=>r['ID Risiko']===data['ID Risiko']);
+    if (idx>=0) S.reals[idx]=data; else S.reals.push(data);
+    const ri=S.risks.findIndex(r=>r.ID===data['ID Risiko']);
+    if (ri>=0) S.risks[ri]['Status Penanganan']=data['Status Penanganan'];
+    toast('Realisasi berhasil disimpan!','ok');
+    resetReal();
+  } else {
+    toast('Gagal: '+(res.error||'Coba lagi'),'err');
+  }
+  btn.disabled=false;
+  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Simpan Realisasi`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: MONITORING
+═══════════════════════════════════════════════════════════ */
+function monitoring() {
+  const el = document.getElementById('content');
+  if (!S.risks.length) {
+    el.innerHTML = `<div class="card"><div class="cb"><div class="empty">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h4>Belum ada data</h4></div></div></div>`;
+    return;
+  }
+  el.innerHTML = `
+<div class="card">
+  <div class="ch" style="justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h3>Tabel Monitoring Risiko</h3>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select id="monFTim" onchange="renderMonTable()" class="btn btn-g btn-sm" style="font-size:11.5px;min-width:180px">
+        <option value="">Semua Tim Kerja</option>
+        ${TIMS.map(t=>`<option>${t}</option>`).join('')}
+      </select>
+      <select id="monFSt" onchange="renderMonTable()" class="btn btn-g btn-sm" style="font-size:11.5px">
+        <option value="">Semua Status</option>
+        <option>Belum Dilaksanakan</option>
+        <option>Sedang Dilaksanakan</option>
+        <option>Selesai Dilaksanakan</option>
+      </select>
+    </div>
+  </div>
+  <div class="cb" style="padding-top:10px">
+    <div class="tbl-wrap" id="mon-tbl">${buildMonTable(S.risks)}</div>
+  </div>
+</div>`;
+}
+
+function renderMonTable() {
+  const tim=fv('monFTim'), st=fv('monFSt');
+  let list=S.risks;
+  if (tim) list=list.filter(r=>(r['Tim Kerja']||'')===tim);
+  if (st)  list=list.filter(r=>{
+    const s=r['Status Penanganan']||(getReal(r.ID)||{})['Status Penanganan']||'Belum Dilaksanakan';
+    return s===st;
+  });
+  const el=f('mon-tbl'); if(el) el.innerHTML=buildMonTable(list);
+}
+
+function buildMonTable(list) {
+  if (!list.length) return `<div class="empty" style="padding:30px"><h4>Tidak ada data</h4></div>`;
+  return `<table>
+    <thead>
+      <tr>
+        <th>No</th><th>Kode</th><th>Uraian Risiko</th>
+        <th colspan="3" style="text-align:center">Sebelum Penanganan</th>
+        <th style="text-align:center">Status</th>
+        <th colspan="3" style="text-align:center">Setelah Penanganan</th>
+        <th>Kesimpulan</th><th>Efektivitas</th><th style="text-align:center">Aksi</th>
+      </tr>
+      <tr>
+        <th></th><th></th><th></th>
+        <th style="text-align:center;font-size:9px">P</th>
+        <th style="text-align:center;font-size:9px">D</th>
+        <th style="font-size:9px">Tingkat</th>
+        <th></th>
+        <th style="text-align:center;font-size:9px">P</th>
+        <th style="text-align:center;font-size:9px">D</th>
+        <th style="font-size:9px">Tingkat</th>
+        <th></th><th></th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+    ${list.map((r,i)=>{
+      const id=r.ID||'', real=getReal(id)||{};
+      const k=r['Level Kemungkinan']||'—', d=r['Level Dampak']||'—';
+      const lv=r['Tingkat Risiko']||'—';
+      const st=r['Status Penanganan']||real['Status Penanganan']||'Belum Dilaksanakan';
+      const ps=real['P Sesudah']||'—', ds=real['D Sesudah']||'—';
+      const lvs=real['Tingkat Sesudah']||'—';
+      const kes=real['Kesimpulan']||'—';
+      const ef=real['Efektivitas']||'—';
+      const efC=ef==='Efektif'?'#16a34a':ef==='Tidak Efektif'?'#dc2626':'#94a3b8';
+      return `<tr>
+        <td style="color:var(--text-m);font-size:11.5px">${i+1}</td>
+        <td class="mono" style="font-weight:700;color:var(--teal);white-space:nowrap;font-size:12px">${r['Kode Risiko']||'—'}</td>
+        <td class="truncate" style="max-width:170px;font-size:12px">${r['Uraian Risiko']||'—'}</td>
+        <td style="text-align:center;font-weight:700">${k}</td>
+        <td style="text-align:center;font-weight:700">${d}</td>
+        <td><span class="badge ${LEVEL_BADGE[lv]||'b-gray'}">${lv}</span></td>
+        <td style="text-align:center"><span class="sp ${STATUS_CLS[st]||'b-gray'}">${st}</span></td>
+        <td style="text-align:center;font-weight:700;color:${ps!=='—'?'var(--teal)':'var(--text-m)'}">${ps}</td>
+        <td style="text-align:center;font-weight:700;color:${ds!=='—'?'var(--teal)':'var(--text-m)'}">${ds}</td>
+        <td><span class="badge ${LEVEL_BADGE[lvs]||'b-gray'}">${lvs}</span></td>
+        <td class="truncate" style="max-width:130px;font-size:11px">${kes}</td>
+        <td><span style="font-size:11px;font-weight:700;color:${efC}">${ef}</span></td>
+        <td style="text-align:center">
+          <button onclick="go('realisasi')" class="btn btn-g btn-sm" title="Edit Realisasi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: LAPORAN
+═══════════════════════════════════════════════════════════ */
+function laporan() {
+  const el = document.getElementById('content');
+  el.innerHTML = `
+<div style="display:grid;gap:18px;max-width:820px">
+  <div class="card">
+    <div class="ch">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <h3>Export Laporan</h3>
+    </div>
+    <div class="cb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-l);padding:18px">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+            <div style="width:42px;height:42px;background:#fee2e2;border-radius:9px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="width:20px;height:20px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13.5px;font-weight:700">Laporan PDF</div>
+              <div style="font-size:11px;color:var(--text-m)">Siap cetak &amp; distribusi resmi</div>
+            </div>
+          </div>
+          <button onclick="exportPDF()" class="btn btn-p" style="width:100%">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </button>
+        </div>
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-l);padding:18px">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+            <div style="width:42px;height:42px;background:#dcfce7;border-radius:9px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" style="width:20px;height:20px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13.5px;font-weight:700">Export CSV / Excel</div>
+              <div style="font-size:11px;color:var(--text-m)">Buka di Excel / Google Sheets</div>
+            </div>
+          </div>
+          <button onclick="exportCSV()" class="btn btn-g" style="width:100%;border-color:#16a34a;color:#16a34a">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Google Sheets link -->
+      <div style="background:var(--teal-ll);border:1px solid rgba(0,121,127,.2);border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <div style="flex:1">
+          <div style="font-size:12.5px;font-weight:700;color:var(--teal)">Lihat Data di Google Sheets</div>
+          <div style="font-size:11px;color:var(--teal-d);margin-top:2px">Data tersinkronisasi otomatis ke spreadsheet BPA</div>
+        </div>
+        <a href="https://docs.google.com/spreadsheets/d/15Y_K2Ca7-rvHp8Ka8eXh1Cqyd19TNi0fTlL42dobJyE/edit" target="_blank" class="btn btn-p btn-sm">Buka Sheets</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview table -->
+  <div class="card">
+    <div class="ch">
+      <div class="ch-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <h3>Preview Data (${S.risks.length} risiko)</h3>
+    </div>
+    <div class="cb" style="padding-top:10px">
+      ${!S.risks.length
+        ? `<div class="empty" style="padding:30px"><h4>Belum ada data</h4></div>`
+        : `<div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>Kode</th><th>Uraian Risiko</th><th>Kategori</th><th>Tim Kerja</th>
+            <th style="text-align:center">K</th><th style="text-align:center">D</th>
+            <th>Tingkat</th><th>Status</th>
+          </tr></thead>
+          <tbody>
+          ${S.risks.map(r=>`<tr>
+            <td class="mono" style="font-weight:700;font-size:11.5px;color:var(--teal)">${r['Kode Risiko']||'—'}</td>
+            <td class="truncate" style="max-width:200px;font-size:12px">${r['Uraian Risiko']||'—'}</td>
+            <td style="font-size:11px">${r['Kategori Risiko']||'—'}</td>
+            <td style="font-size:11px">${(r['Tim Kerja']||'—').replace('Tim Kerja ','')}</td>
+            <td style="text-align:center;font-weight:700">${r['Level Kemungkinan']||'—'}</td>
+            <td style="text-align:center;font-weight:700">${r['Level Dampak']||'—'}</td>
+            <td><span class="badge ${LEVEL_BADGE[r['Tingkat Risiko']||'']||'b-gray'}">${r['Tingkat Risiko']||'—'}</span></td>
+            <td><span class="sp ${STATUS_CLS[r['Status Penanganan']||'']||'b-gray'}" style="font-size:10px">${r['Status Penanganan']||'Belum Dilaksanakan'}</span></td>
+          </tr>`).join('')}
+          </tbody>
+        </table></div>`
+      }
+    </div>
+  </div>
+</div>`;
+}
+
+function exportCSV() {
+  if (!S.risks.length) { toast('Tidak ada data','wrn'); return; }
+  const H=['ID','Kode Risiko','Uraian Risiko','Kategori Risiko','Penyebab Risiko','Dampak Risiko','Sumber Risiko','Pengendalian Risiko','Efektivitas Pengendalian','Level Kemungkinan','Level Dampak','Bobot Dampak','Nilai Risiko','Tingkat Risiko','Selera Risiko','Pilihan Penanganan','Rencana Penanganan','Jadwal Penanganan','Target Kemungkinan','Target Dampak','Target Bobot','Target Nilai','Target Tingkat','Tim Kerja','Tahun','Status Penanganan','Tanggal Input'];
+  let csv='\uFEFF'+H.join(';')+'\n';
+  S.risks.forEach(r=>{ csv+=H.map(h=>`"${String(r[h]||'').replace(/"/g,'""')}"`).join(';')+'\n'; });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`laporan_risiko_bpa_${S.year}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('File CSV berhasil diunduh!','ok');
+}
+
+function exportPDF() {
+  if (!S.risks.length) { toast('Tidak ada data','wrn'); return; }
+  const LC={'Sangat Rendah':'#1d4ed8','Rendah':'#16a34a','Sedang':'#ca8a04','Tinggi':'#ea580c','Sangat Tinggi':'#dc2626'};
+  const userInfo = S.isAdmin ? 'Administrator' : (S.userTim||'Tim Kerja');
+  const rows=S.risks.map((r,i)=>{
+    const lv=r['Tingkat Risiko']||'—';
+    return `<tr style="border-bottom:1px solid #e5e7eb;${i%2?'background:#f9fafb':''}">
+      <td style="padding:7px 8px;font-size:11px;color:#94a3b8">${i+1}</td>
+      <td style="padding:7px 8px;font-size:11px;font-family:monospace;font-weight:700;color:#00797f">${r['Kode Risiko']||'—'}</td>
+      <td style="padding:7px 8px;font-size:11px;max-width:180px">${r['Uraian Risiko']||'—'}</td>
+      <td style="padding:7px 8px;font-size:11px">${r['Kategori Risiko']||'—'}</td>
+      <td style="padding:7px 8px;font-size:11px">${(r['Tim Kerja']||'—').replace('Tim Kerja ','')}</td>
+      <td style="padding:7px 8px;text-align:center;font-weight:700">${r['Level Kemungkinan']||'—'}</td>
+      <td style="padding:7px 8px;text-align:center;font-weight:700">${r['Level Dampak']||'—'}</td>
+      <td style="padding:7px 8px;font-size:11px;font-weight:700;color:${LC[lv]||'#666'}">${lv}</td>
+      <td style="padding:7px 8px;font-size:11px">${r['Status Penanganan']||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+  <title>Laporan Risiko BPA ${S.year}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',Arial,sans-serif;margin:0;padding:28px 36px;color:#0f172a;font-size:12px}
+  .hdr{background:linear-gradient(135deg,#004548,#00797f);color:#fff;padding:22px 26px;border-radius:12px;margin-bottom:22px}
+  .hdr h1{font-size:20px;font-weight:800;margin:0 0 4px} .hdr p{font-size:11px;opacity:.7;margin:0}
+  .meta{display:flex;gap:16px;margin-top:10px}
+  .mi{background:rgba(255,255,255,.12);border-radius:6px;padding:5px 11px}
+  .mi span{font-size:9.5px;opacity:.65;display:block} .mi strong{font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th{background:#00797f;color:#fff;padding:8px;font-size:10px;text-align:left;font-weight:700}
+  .ft{margin-top:22px;text-align:center;font-size:9.5px;color:#94a3b8;border-top:1px solid #e5e7eb;padding-top:10px}
+  @media print{body{padding:12px}th,.hdr{-webkit-print-color-adjust:exact}}</style></head>
+  <body>
+  <div class="hdr">
+    <h1>Laporan Manajemen Risiko — Tahun ${S.year}</h1>
+    <p>Biro Perencanaan dan Anggaran &nbsp;·&nbsp; ${userInfo}</p>
+    <div class="meta">
+      <div class="mi"><span>Tahun</span><strong>${S.year}</strong></div>
+      <div class="mi"><span>Total Risiko</span><strong>${S.risks.length}</strong></div>
+      <div class="mi"><span>Dicetak Oleh</span><strong>${S.user?.username||'—'}</strong></div>
+      <div class="mi"><span>Tanggal</span><strong>${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</strong></div>
+    </div>
+  </div>
+  <table><thead><tr><th>No</th><th>Kode</th><th>Uraian Risiko</th><th>Kategori</th><th>Tim</th><th>K</th><th>D</th><th>Tingkat</th><th>Status</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="ft">BPA Risk Management System v2.2 · ${new Date().toLocaleString('id-ID')}</div>
+  <script>window.onload=function(){window.print()};<\/script>
+  </body></html>`;
+
+  const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  window.open(url,'_blank');
+  setTimeout(()=>URL.revokeObjectURL(url),8000);
+  toast('Laporan siap dicetak!','ok');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+
+// 1. Check auth — redirect to login if not authenticated
+if (!checkAuth()) {
+  // checkAuth handles redirect
+} else {
+
+  // 2. Date display
+  document.getElementById('tb-date').textContent = new Date().toLocaleDateString('id-ID',{
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+
+  // 3. Populate sidebar user info
+  const sbUser = document.getElementById('sb-username');
+  const sbRole = document.getElementById('sb-role');
+  const sbYear = document.getElementById('sb-year-chip');
+  const tbYear = document.getElementById('tb-year-chip');
+
+  if (sbUser) sbUser.textContent = S.user.username;
+  if (sbRole) {
+    sbRole.textContent = S.isAdmin
+      ? 'Administrator'
+      : (S.userTim || 'Tim Kerja').replace('Tim Kerja ','Tim ');
+  }
+  if (sbYear) sbYear.textContent = S.year;
+  if (tbYear) tbYear.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${S.year}`;
+
+  // 4. Hide "Input Risiko" nav item for non-admin
+  const navInput = document.getElementById('nav-input');
+  if (navInput && !S.isAdmin) {
+    navInput.style.display = 'none';
+  }
+
+  // 5. API status
+  if (isLocal()) {
+    setApiStatus(false);
+  } else {
+    api('ping').then(r => setApiStatus(r && r.ok));
+  }
+
+  // 6. Load data
+  loadAll();
+}
+
+
+/* ================================================================
+   AUTH OVERRIDES — menggantikan versi di app JS
+================================================================ */
+function redirectLogin(msg) {
+  clearSessionData();
+  showLogin();
+}
+
+function logout() {
+  closeModal();
+  clearSessionData();
+  showLogin();
+}
+
+function checkAuth() {
+  const session = loadSession();
+  if (!session) { showLogin(); return false; }
+  S.user    = session;
+  S.year    = session.year || String(new Date().getFullYear());
+  S.isAdmin = session.role === 'admin';
+  S.userTim = session.role === 'tim' ? session.tim : null;
+  return true;
+}
+
+/* ================================================================
+   BOOT APP — inisialisasi tampilan setelah login
+================================================================ */
+function bootLogin(userObj, year) {
+  S.user    = { username: userObj.username, role: userObj.role, tim: userObj.tim, year: year, loginAt: Date.now() };
+  S.year    = year;
+  S.isAdmin = userObj.role === 'admin';
+  S.userTim = userObj.role === 'tim' ? userObj.tim : null;
+  showApp();
+  bootApp();
+}
+
+function bootApp() {
+  const tbDate = document.getElementById('tb-date');
+  if (tbDate) tbDate.textContent = new Date().toLocaleDateString('id-ID',{
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+  const sbUser = document.getElementById('sb-username');
+  const sbRole = document.getElementById('sb-role');
+  const sbYear = document.getElementById('sb-year-chip');
+  const tbYear = document.getElementById('tb-year-chip');
+  if (sbUser) sbUser.textContent = S.user.username;
+  if (sbRole) sbRole.textContent = S.isAdmin ? 'Administrator' : (S.userTim||'Tim Kerja').replace('Tim Kerja ','Tim ');
+  if (sbYear) sbYear.textContent = S.year;
+  if (tbYear) tbYear.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${S.year}`;
+  const navInput = document.getElementById('nav-input');
+  if (navInput && !S.isAdmin) navInput.style.display = 'none';
+  if (isLocal()) { setApiStatus(false); } else { api('ping').then(r => setApiStatus(r && r.ok)); }
+  loadAll();
+}
+
+/* ================================================================
+   STARTUP
+================================================================ */
+(function startup() {
+  // Set tahun default
+  const curYear = new Date().getFullYear();
+  const yearSel = document.getElementById('inp-year');
+  if (yearSel) {
+    const opt = yearSel.querySelector(`option[value="${curYear}"]`);
+    if (opt) opt.selected = true;
+  }
+
+  // Cek sesi aktif
+  const session = loadSession();
+  if (session) {
+    S.user    = session;
+    S.year    = session.year || String(curYear);
+    S.isAdmin = session.role === 'admin';
+    S.userTim = session.role === 'tim' ? session.tim : null;
+    showApp();
+    bootApp();
+  } else {
+    showLogin();
+    const u = document.getElementById('inp-user');
+    if (u) setTimeout(() => u.focus(), 50);
+  }
+})();
+</script>
+</body>
+</html>
